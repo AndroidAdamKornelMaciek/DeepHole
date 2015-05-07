@@ -2,7 +2,11 @@
 <resources>
 
     <string name="app_name">DeepHole</string>
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string-array name="recipient_list">
+        <item>Recipient</item>
+        <item>recipient@foo.com</item>
+        <item>anotherrecipient@foo.com</item>
+    </string-array>
 
 </resources>

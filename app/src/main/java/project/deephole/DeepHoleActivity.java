@@ -1,13 +1,15 @@
 package project.deephole;
 
-import android.support.v7.app.ActionBarActivity;
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 //TO JEST GŁÓWNA AKTYWNOŚĆ PANOWIE, OTWIERA SIĘ PO URUCHOMIENIU
 
-public class DeepHoleActivity extends ActionBarActivity {
+public class DeepHoleActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,5 +38,11 @@ public class DeepHoleActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void formulate(View view) {
+        Intent intent = new Intent(this, FormActivity.class);
+//FOR RESULT, JEŚLI CHCEMY ZAPISYWAĆ FORMULARZ ZGŁOSZENIOWY W BAZIE DANYCH I DODAWAĆ GO DO LISTY WYSŁANYCH FORMULARZY PRZEZ UŻYTKOWNIKA
+        startActivity(intent);
     }
 }

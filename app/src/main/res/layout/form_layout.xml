@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hole_photo"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"/>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textMultiLine"
+        android:ems="10"
+        android:id="@+id/description"
+        android:layout_below="@+id/hole_photo"
+        android:layout_centerHorizontal="true"
+        android:maxLines="2"
+        android:lines="2"
+        android:layout_marginBottom="10dp"
+        android:hint="Fault description."/>
+
+    <Spinner
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recipient_list"
+        android:layout_above="@+id/localization_menu"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"/>
+
+    <RadioGroup
+        android:id="@+id/localization_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/sender_PESEL"
+        android:layout_marginBottom="15dp"
+    >
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Automatically fetch current localization."
+            android:id="@+id/auto_radio_button"
+            android:layout_gravity="left" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Manually choose your localization."
+            android:id="@+id/manual_radio_button"
+            android:layout_gravity="left" />
+    </RadioGroup>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="15"
+        android:id="@+id/sender_PESEL"
+        android:layout_above="@+id/confirm_button"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginBottom="15dp"
+        android:hint="Please insert PESEL."/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Submit Form"
+        android:id="@+id/confirm_button"
+        android:textAllCaps="false"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+</RelativeLayout>
