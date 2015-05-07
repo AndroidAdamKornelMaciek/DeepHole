@@ -1,0 +1,6 @@
+package project.deephole;
+
+//AKTYWNOŚĆ FORMULARZA, TUTAJ MOŻLIWOŚĆ DODANIA OPISU, ZDJĘCIA, WYBÓR ADRESATA I OKREŚLENIE GEOLOKALIZACJI
+
+public class FormActivity {
+}
