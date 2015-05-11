@@ -45,6 +45,20 @@ public class DeepHoleActivity extends Activity {
     }
 
     /**
+     * Metoda prywatna. Wywoływana przez send email. Metoda sendEmail, gdy użytkownik wybierze wybór manualny lokalizacji odpali google maps i pozwoli mu wybrać lokalizację.
+     * @param manually true gdy trzeba otworzyć google maps, false otherwise
+     * @return współrzędne geograficzne
+     * Zrobie to do konca poźniej :) agurgul
+     */
+    private String getLocalisation(boolean manually){
+        if (manually){
+            //TODO otwarcie aktywności do wyboru położenia. startactivityforresult?
+        }else{
+            //TODO pobranie 'last known location'
+        }
+        return null;
+    }
+    /**
      * Metoda publiczna do wysyłania maila.
      * TODO ustawianie adresu email wybranego przez użytkownika
      * TODO wybieranie odpowiedniego załącznika
