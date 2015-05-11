@@ -2,10 +2,14 @@ package project.deephole;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import java.io.File;
 
 //TO JEST GŁÓWNA AKTYWNOŚĆ PANOWIE, OTWIERA SIĘ PO URUCHOMIENIU
 
@@ -40,6 +44,29 @@ public class DeepHoleActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Metoda publiczna do wysyłania maila.
+     * TODO ustawianie adresu email wybranego przez użytkownika
+     * TODO wybieranie odpowiedniego załącznika
+     * TODO tworzenie odpowiedniego tekstu z geolokalizacją
+     * autor agurgul (at)author nie można dodać do metody
+     * @param view current View
+     */
+    public void sendEmail(View view){
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setType("text/plain");
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, "adres@mailowy.domena");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Zgłoszenie dziury drogowej");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "String zbudowany z odpowiednich danych. Geolokalizacja, jakieś sratatata");
+        File root = Environment.getExternalStorageDirectory();
+        String pathToMyAttachedFile="temp/attachement.xml";
+        File file = new File(root, pathToMyAttachedFile);
+        if (!file.exists() || !file.canRead()) {
+            return;
+        }
+        Uri uri = Uri.fromFile(file);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+    }
     public void formulate(View view) {
         Intent intent = new Intent(this, FormActivity.class);
 //FOR RESULT, JEŚLI CHCEMY ZAPISYWAĆ FORMULARZ ZGŁOSZENIOWY W BAZIE DANYCH I DODAWAĆ GO DO LISTY WYSŁANYCH FORMULARZY PRZEZ UŻYTKOWNIKA
