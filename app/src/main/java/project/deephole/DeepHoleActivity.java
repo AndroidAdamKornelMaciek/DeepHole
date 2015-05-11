@@ -66,6 +66,7 @@ public class DeepHoleActivity extends Activity {
         }
         Uri uri = Uri.fromFile(file);
         emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
     }
     public void formulate(View view) {
         Intent intent = new Intent(this, FormActivity.class);
