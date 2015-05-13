@@ -15,10 +15,14 @@ import java.io.File;
 
 public class DeepHoleActivity extends Activity {
 
+	private SQLiteDeepHoleHelper db;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.deep_hole_layout);
+
+		db = new SQLiteDeepHoleHelper(this);
     }
 
 
