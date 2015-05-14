@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 //TO JEST GŁÓWNA AKTYWNOŚĆ PANOWIE, OTWIERA SIĘ PO URUCHOMIENIU
+//test commita kornel
 
 public class DeepHoleActivity extends Activity {
 
