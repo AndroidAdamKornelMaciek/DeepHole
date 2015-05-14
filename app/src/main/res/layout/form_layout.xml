@@ -3,12 +3,12 @@
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="460dp"
+        android:layout_height="160dp"
         android:id="@+id/hole_photo"
         android:layout_centerHorizontal="true"
         android:layout_alignParentTop="true"
-		android:layout_marginTop="10dp"
+		android:layout_marginTop="5dp"
 		android:onClick="takePhoto"/>
 
     <EditText
@@ -30,7 +30,7 @@
         android:id="@+id/recipient_list"
         android:layout_above="@+id/localization_menu"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"/>
+        android:layout_marginBottom="10dp"/>
 
     <RadioGroup
         android:id="@+id/localization_menu"
@@ -38,8 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/sender_PESEL"
-        android:layout_marginBottom="15dp"
+        android:layout_above="@+id/sender_signature"
+        android:layout_marginBottom="10dp"
     >
 
         <RadioButton
@@ -63,11 +63,11 @@
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="15"
-        android:id="@+id/sender_PESEL"
+        android:id="@+id/sender_signature"
         android:layout_above="@+id/confirm_button"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:hint="Please insert PESEL."/>
 
     <Button

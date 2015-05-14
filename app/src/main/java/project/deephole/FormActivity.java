@@ -3,20 +3,22 @@ package project.deephole;
 //AKTYWNOŚĆ FORMULARZA, TUTAJ MOŻLIWOŚĆ DODANIA OPISU, ZDJĘCIA, WYBÓR ADRESATA I OKREŚLENIE GEOLOKALIZACJI
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,13 +28,12 @@ import java.util.Date;
 public class FormActivity extends Activity {
 
 	static final int REQUEST_TAKE_PHOTO = 1;
-	/*ściezka do ostanio wykonanego zdjęcia, ustawiana będzie w instanji formularza
-	w polu photoPath przed zapisaniem do bazy danych*/
 	private String currentPhotoPath;
-	/*pytanie co wygodniejsze?*/
-	private Uri currentPhotoUri;
-    private ImageView photoPreview;
-    private Spinner recipientList;
+	private ImageView photoPreview;
+	private EditText descriptEditor, signEditor;
+	private Spinner recipientList;
+	private boolean manual;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,11 +43,23 @@ public class FormActivity extends Activity {
         photoPreview = (ImageView) findViewById(R.id.hole_photo);
         photoPreview.setImageResource(R.drawable.camera_icon);
 
+		descriptEditor = (EditText) findViewById(R.id.description);
+		signEditor = (EditText) findViewById(R.id.sender_signature);
+
         recipientList = (Spinner) findViewById(R.id.recipient_list);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.recipient_list, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         recipientList.setAdapter(adapter);
+
+		RadioGroup localizationMenu = (RadioGroup) findViewById(R.id.localization_menu);
+		localizationMenu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				manual = (checkedId == R.id.manual_radio_button);
+			}
+		});
     }
 
 	@Override
@@ -79,7 +92,7 @@ public class FormActivity extends Activity {
 			} catch (IOException ex) { Log.d("dispatchPhotoIntent", "Problem z utworzeniem pliku!"); }
 
 			if (photoFile != null) {
-				currentPhotoUri = Uri.fromFile(photoFile);
+				Uri currentPhotoUri = Uri.fromFile(photoFile);
 				intent.putExtra(MediaStore.EXTRA_OUTPUT,
 						currentPhotoUri);
 				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
@@ -95,8 +108,7 @@ public class FormActivity extends Activity {
 		File image = File.createTempFile(
 				imageFileName,
 				".jpg",
-				storageDir
-		);
+				storageDir);
 
 		currentPhotoPath = image.getAbsolutePath();//"file:" + image.getAbsolutePath();
 		return image;
@@ -123,5 +135,31 @@ public class FormActivity extends Activity {
 
 		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		photoPreview.setImageBitmap(bitmap);
+	}
+
+	/*Metoda zbiera dane z widoków, następnie tworzy z danych obiekt klasy Form, który zapisuje
+	* do bazy danych, i wysyła maila z załącznikami
+	* uwaga: jakie pola są wymagane, czy oznaczamy je np. gwiazdką?
+	* Po ustaleniu dodamy warunki, które blokują wysłanie "pustego" zgłoszenia*/
+	public void sendMail(View view) {
+		String path = currentPhotoPath;
+		String desc = descriptEditor.getText().toString();
+		String recipient = recipientList.getSelectedItem().toString();
+		String signature = signEditor.getText().toString();
+		TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+		String phoneNumber = tMgr.getLine1Number();
+
+		if(manual) {
+//uruchomienie map
+		} else {
+//pobranie lokalizacji
+		}
+
+//tu mamy lokalizację z powyższego "if elsa"
+		String localization = "no zgadnij cwaniaczku gdzie teraz jestem";
+
+//uwaga: id ustawiam na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
+		Form form = new Form(0, path, desc, recipient, localization, signature, phoneNumber);
+//zapis do DB + wysyłanie maila
 	}
 }

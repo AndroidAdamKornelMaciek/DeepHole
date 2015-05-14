@@ -9,11 +9,11 @@ public class Form {
 	private String recipient;
 	private String localization;
 	private String signature;
-	private int telephone;
+	private String telephone;
 
 	public Form() {}
 
-	public Form(int id, String path, String dsc, String rec, String loc, String sgn, int tel) {
+	public Form(int id, String path, String dsc, String rec, String loc, String sgn, String tel) {
 		this.id = id;
 		photoPath = path;
 		description = dsc;
@@ -72,11 +72,11 @@ public class Form {
 		this.signature = signature;
 	}
 
-	public int getTelephone() {
+	public String getTelephone() {
 		return telephone;
 	}
 
-	public void setTelephone(int telephone) {
+	public void setTelephone(String telephone) {
 		this.telephone = telephone;
 	}
 

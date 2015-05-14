@@ -41,7 +41,7 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 				"Recipient TEXT ," +
 				"Localization TEXT ," +
 				"Signature TEXT ," +
-				"TelephoneNumber INTEGER )";
+				"TelephoneNumber TEXT )";
 
 		db.execSQL(CREATE_DEEP_HOLE_TABLE);
 	}
@@ -154,7 +154,7 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		form.setRecipient(cursor.getString(3));
 		form.setLocalization(cursor.getString(4));
 		form.setSignature(cursor.getString(5));
-		form.setTelephone(Integer.parseInt(cursor.getString(6)));
+		form.setTelephone(cursor.getString(6));
 
 		return form;
 	}
