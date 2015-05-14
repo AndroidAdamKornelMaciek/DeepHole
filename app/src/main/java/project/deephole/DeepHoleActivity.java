@@ -10,12 +10,15 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 //TO JEST GŁÓWNA AKTYWNOŚĆ PANOWIE, OTWIERA SIĘ PO URUCHOMIENIU
 
 public class DeepHoleActivity extends Activity {
 
 	private SQLiteDeepHoleHelper db;
+	private List<Form> forms = new LinkedList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,4 +94,24 @@ public class DeepHoleActivity extends Activity {
 //FOR RESULT, JEŚLI CHCEMY ZAPISYWAĆ FORMULARZ ZGŁOSZENIOWY W BAZIE DANYCH I DODAWAĆ GO DO LISTY WYSŁANYCH FORMULARZY PRZEZ UŻYTKOWNIKA
         startActivity(intent);
     }
+
+//FUNCKJA DO TESTOWANIA OPERACJI INSERT W BAZIE DANYCH
+	public void insertTest(View v) {
+		Form form = new Form();
+		form.setTelephone(123456789);
+		form.setDescription("opis dziury");
+		form.setPhotoPath("path");
+		db.insertForm(form);
+	}
+
+//FUNCKJA DO TESTOWANIA POBIERANIA LISTY WSZYSTKICH FORMULARZY ZAWARTYCH W BAZIE DANYCH
+	public void getAllTest(View v) {
+		forms = db.getAllForms();
+	}
+
+//FUNCKJA DO TESTOWANIA OPERACJI DELETE W BAZIE DANYCH
+	public void deleteTest(View v) {
+		if(!forms.isEmpty())
+			db.deleteForm(forms.get(0));
+	}
 }

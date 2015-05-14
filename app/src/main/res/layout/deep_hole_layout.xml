@@ -15,4 +15,34 @@
         android:textAllCaps="false"
         android:onClick="formulate"/>
 
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Insert"
+		android:id="@+id/button"
+		android:layout_alignParentTop="true"
+		android:layout_alignLeft="@+id/report_button"
+		android:layout_alignStart="@+id/report_button"
+		android:onClick="insertTest"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Get all"
+		android:id="@+id/button2"
+		android:layout_below="@+id/button"
+		android:layout_alignLeft="@+id/button"
+		android:layout_alignStart="@+id/button"
+		android:onClick="getAllTest"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Delete"
+		android:id="@+id/button3"
+		android:layout_below="@+id/button2"
+		android:layout_alignLeft="@+id/button2"
+		android:layout_alignStart="@+id/button2"
+		android:onClick="deleteTest"/>
+
 </RelativeLayout>

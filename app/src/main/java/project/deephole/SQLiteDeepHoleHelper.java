@@ -8,6 +8,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.util.ArrayList;
+import java.util.List;
+
 //KLASA ODPOWIADA ZA KOMUNIKACJĘ Z BAZĄ DANYCH
 public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 
@@ -34,10 +37,10 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		String CREATE_DEEP_HOLE_TABLE = "CREATE TABLE DeepHoleForms ( " +
 				"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				"PhotoPath TEXT, " +
-				"Description TEXT )" +
-				"Recipient TEXT )" +
-				"Localization TEXT )" +
-				"Signature TEXT )" +
+				"Description TEXT ," +
+				"Recipient TEXT ," +
+				"Localization TEXT ," +
+				"Signature TEXT ," +
 				"TelephoneNumber INTEGER )";
 
 		db.execSQL(CREATE_DEEP_HOLE_TABLE);
@@ -49,30 +52,24 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		this.onCreate(db);
 	}
 
-	public void addForm(Form form){
+	public void insertForm(Form form){
 		SQLiteDatabase db = getWritableDatabase();
 
-		ContentValues values = new ContentValues();
-		values.put(KEY_PHOTO_PATH, form.getPhotoPath());
-		values.put(KEY_DESCRIPTION, form.getDescription());
-		values.put(KEY_RECIPIENT, form.getRecipient());
-		values.put(KEY_LOCALIZATION, form.getLocalization());
-		values.put(KEY_SIGNATURE, form.getSignature());
-		values.put(KEY_TELEPHONE_NUMBER, form.getTelephone());
+		ContentValues values = contentValuesBuilder(form);
 
 		db.insert(TABLE_DEEP_HOLE_FORMS, null, values);
 		db.close();
 
-		Log.d("addForm", form.toString());
+		Log.d("insertForm", form.toString());
 	}
 
-	public Form getForm(int id){
+	public Form selectForm(int id){
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor =
 				db.query(TABLE_DEEP_HOLE_FORMS,
 						COLUMNS,
-						" ID = ?",
+						KEY_ID + " = ?",
 						new String[] { String.valueOf(id) },
 						null, // group by
 						null, // having
@@ -81,7 +78,75 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 
 		if (cursor != null)
 			cursor.moveToFirst();
+		else {
+			Log.d("selectForm", "cursor == null, brak formularza o zadanym id!");
+			return null;
+		}
 
+		Form form = formBuilder(cursor);
+
+		Log.d("selectForm(" + id + ")", form.toString());
+		return form;
+	}
+
+	public List<Form> getAllForms() {
+		ArrayList<Form> forms = new ArrayList<>();
+
+		String query = "SELECT  * FROM " + TABLE_DEEP_HOLE_FORMS;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(query, null);
+
+		if (cursor.moveToFirst()) {
+			do {
+				Form form = formBuilder(cursor);
+
+				forms.add(form);
+			} while (cursor.moveToNext());
+		}
+
+		Log.d("getAllForms()", forms.toString());
+		return forms;
+	}
+
+	public int updateForm(Form form) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		ContentValues values = contentValuesBuilder(form);
+
+		int i = db.update(TABLE_DEEP_HOLE_FORMS,
+				values,
+				KEY_ID + " = ?",
+				new String[] { String.valueOf(form.getId()) });
+
+		db.close();
+		return i;
+	}
+
+	public void deleteForm(Form form) {
+		SQLiteDatabase db = this.getWritableDatabase();
+
+		db.delete(TABLE_DEEP_HOLE_FORMS,
+				KEY_ID + " = ?",
+				new String[] { String.valueOf(form.getId()) });
+
+		db.close();
+		Log.d("deleteForm", form.toString());
+	}
+
+	public ContentValues contentValuesBuilder(Form form) {
+		ContentValues values = new ContentValues();
+		values.put(KEY_PHOTO_PATH, form.getPhotoPath());
+		values.put(KEY_DESCRIPTION, form.getDescription());
+		values.put(KEY_RECIPIENT, form.getRecipient());
+		values.put(KEY_LOCALIZATION, form.getLocalization());
+		values.put(KEY_SIGNATURE, form.getSignature());
+		values.put(KEY_TELEPHONE_NUMBER, form.getTelephone());
+
+		return values;
+	}
+
+	public Form formBuilder(Cursor cursor) {
 		Form form = new Form();
 		form.setId(Integer.parseInt(cursor.getString(0)));
 		form.setPhotoPath(cursor.getString(1));
@@ -90,8 +155,6 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		form.setLocalization(cursor.getString(4));
 		form.setSignature(cursor.getString(5));
 		form.setTelephone(Integer.parseInt(cursor.getString(6)));
-
-		Log.d("getBook("+id+")", form.toString());
 
 		return form;
 	}
