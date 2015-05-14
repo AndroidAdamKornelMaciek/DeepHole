@@ -115,4 +115,10 @@ public class DeepHoleActivity extends Activity {
 		if(!forms.isEmpty())
 			db.deleteForm(forms.get(0));
 	}
+
+//FUNKCJA DO TESTOWANIA MAP GOOGLE BLA BLA API V2
+	public void mapsTest(View v) {
+		Intent intent = new Intent(this, LocationActivity.class);
+		startActivity(intent);
+	}
 }

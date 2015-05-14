@@ -45,4 +45,14 @@
 		android:layout_alignStart="@+id/button2"
 		android:onClick="deleteTest"/>
 
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Maps"
+		android:id="@+id/button4"
+		android:layout_alignParentBottom="true"
+		android:layout_alignLeft="@+id/report_button"
+		android:layout_alignStart="@+id/report_button"
+		android:onClick="mapsTest"/>
+
 </RelativeLayout>
