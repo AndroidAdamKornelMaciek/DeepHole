@@ -99,7 +99,7 @@ public class DeepHoleActivity extends Activity {
 //FUNCKJA DO TESTOWANIA OPERACJI INSERT W BAZIE DANYCH
 	public void insertTest(View v) {
 		Form form = new Form();
-		form.setTelephone(123456789);
+		form.setTelephone("123456789");
 		form.setDescription("opis dziury");
 		form.setPhotoPath("path");
 		db.insertForm(form);
