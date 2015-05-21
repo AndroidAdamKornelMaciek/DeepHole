@@ -89,7 +89,7 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		return form;
 	}
 
-	public List<Form> getAllForms() {
+	public ArrayList<Form> getAllForms() {
 		ArrayList<Form> forms = new ArrayList<>();
 
 		String query = "SELECT  * FROM " + TABLE_DEEP_HOLE_FORMS;
@@ -100,13 +100,31 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		if (cursor.moveToFirst()) {
 			do {
 				Form form = formBuilder(cursor);
-
 				forms.add(form);
 			} while (cursor.moveToNext());
 		}
 
 		Log.d("getAllForms()", forms.toString());
 		return forms;
+	}
+
+	public ArrayList<String> getAllLocations() {
+		ArrayList<String> locations = new ArrayList<>();
+
+		String query = "SELECT " + KEY_LOCALIZATION + " FROM " + TABLE_DEEP_HOLE_FORMS;
+
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(query, null);
+
+		if (cursor.moveToFirst()) {
+			do {
+				String location = cursor.getString(0);
+				locations.add(location);
+			} while (cursor.moveToNext());
+		}
+
+		Log.d("getAllLocations()", locations.toString());
+		return locations;
 	}
 
 	public int updateForm(Form form) {

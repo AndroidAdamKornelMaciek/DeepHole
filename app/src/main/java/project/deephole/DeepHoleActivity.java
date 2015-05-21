@@ -86,12 +86,12 @@ public class DeepHoleActivity extends Activity {
 	}
 
 	public void onOverview(View view) {
-		//metoda urachamia aktywność, w której użytkownik przegląda zapisane dziury
+		Intent intent = new Intent(this, OverviewActivity.class);
+		startActivity(intent);
 	}
 
 	public void onFormulate(View view) {
 		Intent intent = new Intent(this, FormActivity.class);
-//FOR RESULT, JEŚLI CHCEMY ZAPISYWAĆ FORMULARZ ZGŁOSZENIOWY W BAZIE DANYCH I DODAWAĆ GO DO LISTY WYSŁANYCH FORMULARZY PRZEZ UŻYTKOWNIKA
 		startActivity(intent);
 	}
 
