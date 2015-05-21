@@ -38,6 +38,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 	static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_LOCATION = 2;
+
+	private SQLiteDeepHoleHelper db;
 	private String currentPhotoPath;
 	private ImageView photoPreview;
 	private EditText descriptEditor, signEditor;
@@ -51,6 +53,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.form_layout);
+		db = new SQLiteDeepHoleHelper(this);
 
 		photoPreview = (ImageView) findViewById(R.id.hole_photo);
 		photoPreview.setImageResource(R.drawable.camera_icon);
@@ -90,8 +93,24 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		} else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
 			Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
 			LatLng location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
+
 			Log.d("Powrót z aktywności map", location.toString());
-			//mamy lokalizację wybraną z mapy
+
+			String desc = descriptEditor.getText().toString();
+			String recipient = recipientList.getSelectedItem().toString();
+			String signature = signEditor.getText().toString();
+			TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+			String phoneNumber = tMgr.getLine1Number();
+
+			//uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
+			Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
+
+			Log.d("Wygenerowany formularz", form.toString());
+
+			db.insertForm(form);
+			//ostateczny test zapisu do bazy danych
+			db.getAllForms();
+			//wysyłanie maila
         }
 	}
 
@@ -159,12 +178,13 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	* uwaga: jakie pola są wymagane, czy oznaczamy je np. gwiazdką?
 	* Po ustaleniu dodamy warunki, które blokują wysłanie "pustego" zgłoszenia*/
 	public void sendMail(View view) {
-		String path = currentPhotoPath;
-		String desc = descriptEditor.getText().toString();
 		String recipient = recipientList.getSelectedItem().toString();
-		String signature = signEditor.getText().toString();
-		TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-		String phoneNumber = tMgr.getLine1Number();
+
+		if(recipient.equals("Recipient")) {
+			Toast.makeText(getApplicationContext(), "Please choose a recipient!",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
 
 		if(manual) {
 			Intent intent = new Intent(this, LocationActivity.class);
@@ -179,11 +199,9 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
 			if (mLastKnownLocation != null) {
-				/*wydobyć z lokalizacji odpowiednie dane
-				póki co nie można jej pobrać nawet przy włączonym GPS*/
+				//nie można pobrać lokalizacji nawet przy włączonym GPS
 				Log.d("Lokalizacja", mLastKnownLocation.toString());
 			} else {
-				//tak naprawdę for result, żeby zyskać lokalziację
 				Intent intent = new Intent(this, LocationActivity.class);
 				startActivityForResult(intent, REQUEST_LOCATION);
 				Toast.makeText(getApplicationContext(), "Can't fetch your last location.",
@@ -191,12 +209,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			}
 
 		}
-		//jaki typ?
-		String localization = null;
-
-		//uwaga: id ustawiam na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
-		Form form = new Form(0, path, desc, recipient, localization, signature, phoneNumber);
-		//zapis do DB + wysyłanie maila
 	}
 
 	@Override

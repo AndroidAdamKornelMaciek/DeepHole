@@ -5,6 +5,16 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".DeepHoleActivity">
 
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="List of potholes"
+		android:id="@+id/overview_btn"
+		android:textAllCaps="false"
+		android:layout_above="@+id/report_button"
+		android:layout_centerHorizontal="true"
+		android:onClick="onOverview"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -13,6 +23,16 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:textAllCaps="false"
-        android:onClick="formulate"/>
+        android:onClick="onFormulate"/>
+
+	<Button
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="Drafts"
+		android:id="@+id/draft_btn"
+		android:textAllCaps="false"
+		android:layout_below="@+id/report_button"
+		android:layout_centerHorizontal="true"
+		android:onClick="onDraft"/>
 
 </RelativeLayout>

@@ -17,15 +17,10 @@ import java.util.List;
 
 public class DeepHoleActivity extends Activity {
 
-	private SQLiteDeepHoleHelper db;
-	private List<Form> forms = new LinkedList<>();
-
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.deep_hole_layout);
-
-		db = new SQLiteDeepHoleHelper(this);
 	}
 
 
@@ -89,9 +84,18 @@ public class DeepHoleActivity extends Activity {
 		emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
 		startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
 	}
-	public void formulate(View view) {
+
+	public void onOverview(View view) {
+		//metoda urachamia aktywność, w której użytkownik przegląda zapisane dziury
+	}
+
+	public void onFormulate(View view) {
 		Intent intent = new Intent(this, FormActivity.class);
 //FOR RESULT, JEŚLI CHCEMY ZAPISYWAĆ FORMULARZ ZGŁOSZENIOWY W BAZIE DANYCH I DODAWAĆ GO DO LISTY WYSŁANYCH FORMULARZY PRZEZ UŻYTKOWNIKA
 		startActivity(intent);
+	}
+
+	public void onDraft(View view) {
+		//metoda uruchamia aktywność, w której użytkownik może wypełnić ostatni nieskończony formularz
 	}
 }

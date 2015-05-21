@@ -22,7 +22,7 @@
         android:maxLines="2"
         android:lines="2"
         android:layout_marginBottom="10dp"
-        android:hint="Fault description."/>
+        android:hint="Pothole description."/>
 
     <Spinner
         android:layout_width="wrap_content"

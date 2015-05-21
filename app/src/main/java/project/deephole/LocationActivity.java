@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
@@ -42,7 +43,7 @@ public class LocationActivity extends Activity {
 				marker = map.addMarker(new MarkerOptions()
 								.position(latLng)
 								.title("Here is a deep hole...")
-								//.icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
+										//.icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
 								.draggable(true)
 				);
 				picked = true;
@@ -51,6 +52,11 @@ public class LocationActivity extends Activity {
 	}
 
 	public void confirmLocation(View view) {
+		if(!picked) {
+			Toast.makeText(getApplicationContext(), "Please pick pothole localization.",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
 		Intent data = new Intent();
 		Bundle coordinates = new Bundle();
 		coordinates.putParcelable(LOCATION_KEY, marker.getPosition());
