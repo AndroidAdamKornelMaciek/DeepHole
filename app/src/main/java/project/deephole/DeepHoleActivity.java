@@ -94,30 +94,4 @@ public class DeepHoleActivity extends Activity {
 //FOR RESULT, JEŚLI CHCEMY ZAPISYWAĆ FORMULARZ ZGŁOSZENIOWY W BAZIE DANYCH I DODAWAĆ GO DO LISTY WYSŁANYCH FORMULARZY PRZEZ UŻYTKOWNIKA
 		startActivity(intent);
 	}
-
-	//FUNCKJA DO TESTOWANIA OPERACJI INSERT W BAZIE DANYCH
-	public void insertTest(View v) {
-		Form form = new Form();
-		form.setTelephone("123456789");
-		form.setDescription("opis dziury");
-		form.setPhotoPath("path");
-		db.insertForm(form);
-	}
-
-	//FUNCKJA DO TESTOWANIA POBIERANIA LISTY WSZYSTKICH FORMULARZY ZAWARTYCH W BAZIE DANYCH
-	public void getAllTest(View v) {
-		forms = db.getAllForms();
-	}
-
-	//FUNCKJA DO TESTOWANIA OPERACJI DELETE W BAZIE DANYCH
-	public void deleteTest(View v) {
-		if(!forms.isEmpty())
-			db.deleteForm(forms.get(0));
-	}
-
-	//FUNKCJA DO TESTOWANIA MAP GOOGLE BLA BLA API V2
-	public void mapsTest(View v) {
-		Intent intent = new Intent(this, LocationActivity.class);
-		startActivity(intent);
-	}
 }

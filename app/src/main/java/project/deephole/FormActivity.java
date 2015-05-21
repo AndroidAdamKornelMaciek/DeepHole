@@ -20,12 +20,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.io.File;
 import java.io.IOException;
@@ -86,7 +88,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			Bitmap imageBitmap = (Bitmap) extras.get("data");
 			photoPreview.setImageBitmap(imageBitmap);*/
 		} else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
-
+			Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
+			LatLng location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
+			Log.d("Powrót z aktywności map", location.toString());
+			//mamy lokalizację wybraną z mapy
         }
 	}
 
@@ -161,10 +166,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		TelephonyManager tMgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String phoneNumber = tMgr.getLine1Number();
 
-		if(manual) {//uruchomienie map
+		if(manual) {
 			Intent intent = new Intent(this, LocationActivity.class);
 			startActivityForResult(intent, REQUEST_LOCATION);
-		} else { //pobranie lokalizacji
+		} else {
 			if (mGoogleApiClient == null) {
 				mGoogleApiClient = new GoogleApiClient.Builder(this)
 						.addConnectionCallbacks(this)
@@ -174,15 +179,20 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
 			if (mLastKnownLocation != null) {
-				//mamy lokalizacje
+				/*wydobyć z lokalizacji odpowiednie dane
+				póki co nie można jej pobrać nawet przy włączonym GPS*/
+				Log.d("Lokalizacja", mLastKnownLocation.toString());
 			} else {
-				//nie mamy
+				//tak naprawdę for result, żeby zyskać lokalziację
+				Intent intent = new Intent(this, LocationActivity.class);
+				startActivityForResult(intent, REQUEST_LOCATION);
+				Toast.makeText(getApplicationContext(), "Can't fetch your last location.",
+						Toast.LENGTH_LONG).show();
 			}
 
 		}
-
-		//tu mamy lokalizację z powyższego "if elsa"
-		String localization = "no zgadnij cwaniaczku gdzie teraz jestem";
+		//jaki typ?
+		String localization = null;
 
 		//uwaga: id ustawiam na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
 		Form form = new Form(0, path, desc, recipient, localization, signature, phoneNumber);
