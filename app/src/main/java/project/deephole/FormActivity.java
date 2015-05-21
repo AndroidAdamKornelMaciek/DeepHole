@@ -108,9 +108,37 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			Log.d("Wygenerowany formularz", form.toString());
 
 			db.insertForm(form);
-			//ostateczny test zapisu do bazy danych
-			db.getAllForms();
+
 			//wysyłanie maila
+			Intent emailIntent = new Intent(Intent.ACTION_SEND);
+			emailIntent.setType("text/plain");
+			emailIntent.putExtra(Intent.EXTRA_EMAIL, recipient);
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
+			emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
+			+ "Localization: " + location.toString() + "\n"
+			+ "Contact: " + phoneNumber + "\n"
+			+ "Signature: " + signature);
+
+			File root = Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES);
+			//File file = new File(root, currentPhotoPath);
+			File file = new File(currentPhotoPath);
+			if (!file.exists() || !file.canRead()) {
+				Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
+				return;
+			}
+			Uri uri = Uri.fromFile(file);
+			emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+			try {
+				startActivity(Intent.createChooser(emailIntent, "sending mail"));
+				Toast.makeText(getApplicationContext(), "Form was sent successfully.",
+						Toast.LENGTH_LONG).show();
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(getApplicationContext(), "There is no mail client installed.",
+						Toast.LENGTH_LONG).show();
+			}
+			finish();
         }
 	}
 
@@ -182,6 +210,12 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 		if(recipient.equals("Recipient")) {
 			Toast.makeText(getApplicationContext(), "Please choose a recipient!",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		if(currentPhotoPath == null) {
+			Toast.makeText(getApplicationContext(), "Please take a photo!",
 					Toast.LENGTH_LONG).show();
 			return;
 		}
