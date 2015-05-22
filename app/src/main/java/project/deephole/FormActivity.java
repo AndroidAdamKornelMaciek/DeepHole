@@ -5,6 +5,7 @@ package project.deephole;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -38,7 +39,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 	static final int REQUEST_TAKE_PHOTO = 1;
     static final int REQUEST_LOCATION = 2;
-
+    static final String ADDED = "added";
+    static final String PATH = "path";
 	private SQLiteDeepHoleHelper db;
 	private String currentPhotoPath;
 	private ImageView photoPreview;
@@ -47,6 +49,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	private boolean manual;
 	private GoogleApiClient mGoogleApiClient; //do gejolokalizacji
 	private Location mLastKnownLocation;
+	private boolean pictureAdded;
 
 
 	@Override
@@ -54,7 +57,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.form_layout);
 		db = new SQLiteDeepHoleHelper(this);
-
+		pictureAdded = false;
 		photoPreview = (ImageView) findViewById(R.id.hole_photo);
 		photoPreview.setImageResource(R.drawable.camera_icon);
 
@@ -75,6 +78,20 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 				manual = (checkedId == R.id.manual_radio_button);
 			}
 		});
+        if (savedInstanceState == null){
+            return;
+        }
+        if (savedInstanceState.containsKey(ADDED)){
+            if (savedInstanceState.getBoolean(ADDED)){
+                try{
+                    currentPhotoPath = savedInstanceState.getString(PATH);
+                    setPic();
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        }
+
 	}
 
 	@Override
@@ -112,7 +129,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			//wysyłanie maila
 			Intent emailIntent = new Intent(Intent.ACTION_SEND);
 			emailIntent.setType("text/plain");
-			emailIntent.putExtra(Intent.EXTRA_EMAIL, recipient);
+			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
 			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
 			emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
 			+ "Localization: " + location.toString() + "\n"
@@ -170,9 +187,9 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		File storageDir = Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_PICTURES);
 		File image = File.createTempFile(
-				imageFileName,
-				".jpg",
-				storageDir);
+                imageFileName,
+                ".jpg",
+                storageDir);
 
 		currentPhotoPath = image.getAbsolutePath();//"file:" + image.getAbsolutePath();
 		return image;
@@ -191,15 +208,30 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		int photoW = bmOptions.outWidth;
 		int photoH = bmOptions.outHeight;
-
-		int scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+        int scaleFactor;
+		if (targetW == 0 || targetH == 0){
+            scaleFactor = 1;
+        }else{
+            scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        }
 
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 
 		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		photoPreview.setImageBitmap(bitmap);
+		pictureAdded = true;
 	}
+    private void setPicOnRestore(){
+
+        File imgFile = new  File(currentPhotoPath);
+        if(imgFile.exists()){
+
+            Bitmap myBitmap = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            photoPreview.setImageBitmap(myBitmap);
+            pictureAdded = true;
+        }
+    }
 
 	/*Metoda zbiera dane z widoków, następnie tworzy z danych obiekt klasy Form, który zapisuje
 	* do bazy danych, i wysyła maila z załącznikami
@@ -215,7 +247,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		}
 
 		if(currentPhotoPath == null) {
-			Toast.makeText(getApplicationContext(), "Please take a photo!",
+			Toast.makeText(getApplicationContext(), "Please take a picture!",
 					Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -258,5 +290,16 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	@Override
 	public void onConnectionFailed(ConnectionResult connectionResult) {
 
+	}
+	@Override
+	public void onSaveInstanceState(Bundle outState){
+        Log.d("debug", "onSaveInstanceState");
+		super.onSaveInstanceState(outState);
+		if(pictureAdded){
+			outState.putBoolean(ADDED, true);
+            outState.putString(PATH, currentPhotoPath);
+		}else{
+			outState.putBoolean(ADDED, false);
+		}
 	}
 }
