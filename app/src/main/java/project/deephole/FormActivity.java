@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -85,7 +86,19 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             if (savedInstanceState.getBoolean(ADDED)){
                 try{
                     currentPhotoPath = savedInstanceState.getString(PATH);
-                    setPic();
+
+                    photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            // usunac observer, zeby odpalil tylko raz
+                            photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+                            setPic();
+                        }
+                    });
+
+
+
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -209,16 +222,17 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		int photoW = bmOptions.outWidth;
 		int photoH = bmOptions.outHeight;
         int scaleFactor;
-		if (targetW == 0 || targetH == 0){
-            scaleFactor = 1;
+		/*if (targetW == 0 || targetH == 0){
+            scaleFactor = 1/16;
         }else{
             scaleFactor = Math.min(photoW / targetW, photoH / targetH);
-        }
+        }*/
+        scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 
-		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		photoPreview.setImageBitmap(bitmap);
 		pictureAdded = true;
 	}
