@@ -46,45 +46,6 @@ public class DeepHoleActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * Metoda prywatna. Wywoływana przez send email. Metoda sendEmail, gdy użytkownik wybierze wybór manualny lokalizacji odpali google maps i pozwoli mu wybrać lokalizację.
-	 * @param manually true gdy trzeba otworzyć google maps, false otherwise
-	 * @return współrzędne geograficzne
-	 * Zrobie to do konca poźniej :) agurgul
-	 */
-	private String getLocalisation(boolean manually){
-		if (manually){
-			//TODO otwarcie aktywności do wyboru położenia. startactivityforresult?
-		}else{
-			//TODO pobranie 'last known location'
-		}
-		return null;
-	}
-	/**
-	 * Metoda publiczna do wysyłania maila.
-	 * TODO ustawianie adresu email wybranego przez użytkownika
-	 * TODO wybieranie odpowiedniego załącznika
-	 * TODO tworzenie odpowiedniego tekstu z geolokalizacją
-	 * autor agurgul (at)author nie można dodać do metody
-	 * @param view current View
-	 */
-	public void sendEmail(View view){
-		Intent emailIntent = new Intent(Intent.ACTION_SEND);
-		emailIntent.setType("text/plain");
-		emailIntent.putExtra(Intent.EXTRA_EMAIL, "adres@mailowy.domena");
-		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Zgłoszenie dziury drogowej");
-		emailIntent.putExtra(Intent.EXTRA_TEXT, "String zbudowany z odpowiednich danych. Geolokalizacja, jakieś sratatata");
-		File root = Environment.getExternalStorageDirectory();
-		String pathToMyAttachedFile="temp/attachement.xml";
-		File file = new File(root, pathToMyAttachedFile);
-		if (!file.exists() || !file.canRead()) {
-			return;
-		}
-		Uri uri = Uri.fromFile(file);
-		emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-		startActivity(Intent.createChooser(emailIntent, "Pick an Email provider"));
-	}
-
 	public void onOverview(View view) {
 		Intent intent = new Intent(this, OverviewActivity.class);
 		startActivity(intent);
