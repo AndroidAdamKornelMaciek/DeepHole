@@ -43,379 +43,397 @@ import java.util.Date;
  * @version 1.0
  */
 public class FormActivity extends Activity implements ConnectionCallbacks, OnConnectionFailedListener {
-    /**
-     * Stała przechowująca wartość request code dla akcji zdjęcie.
-     */
-    static final int REQUEST_TAKE_PHOTO = 1;
-    /**
-     * Stała przechowująca wartość request code dla akcji lokalizacja.
-     */
-    static final int REQUEST_LOCATION = 2;
-    /**
-     * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
-     */
-    static final String ADDED = "added";
-    /**
-     * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
-     */
-    static final String PATH = "path";
-    private SQLiteDeepHoleHelper db;
-    /**
-     * Pole przechowujące ścieżkę zdjęcia, które zostało zrobione.
-     */
-    private String currentPhotoPath;
-    /**
-     * W photoPreview wyświetlamy miniaturę zdjęcia, które zostało wykonane.
-     */
-    private ImageView photoPreview;
-    /**
-     * Pole, w które użytkownik wpisuje opis dziury.
-     */
-    private EditText descriptEditor;
-    /**
-     * Pole, w którym użytkownik się podpisuje.
-     */
-    private EditText signEditor;
-    /**
-     * Spinner zawierający listę odbiorców maila.
-     */
-    private Spinner recipientList;
-    /**
-     * Boolean przechowujący wybór użytkownika. Wybór lokalizacji manualny lub automatyczny.
-     */
-    private boolean manual;
-    /**
-     * TODO
-     */
-    private GoogleApiClient mGoogleApiClient;
-    /**
-     * TODO
-     */
-    private Location mLastKnownLocation;
-    /**
-     * Boolean przechowujący flagę, czy zostało już wykonane zdjęcie do raportu.
-     */
-    private boolean pictureAdded;
-    /**
-     * Przechowuje lokalizację.
-     */
-    LatLng location;
+	/**
+	 * Stała przechowująca wartość request code dla akcji zdjęcie.
+	 */
+	static final int REQUEST_TAKE_PHOTO = 1;
+	/**
+	 * Stała przechowująca wartość request code dla akcji lokalizacja.
+	 */
+	static final int REQUEST_LOCATION = 2;
+	/**
+	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
+	 */
+	static final String ADDED = "added";
+	/**
+	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
+	 */
+	static final String PATH = "path";
+	private SQLiteDeepHoleHelper db;
+	/**
+	 * Pole przechowujące ścieżkę zdjęcia, które zostało zrobione.
+	 */
+	private String currentPhotoPath;
+	/**
+	 * W photoPreview wyświetlamy miniaturę zdjęcia, które zostało wykonane.
+	 */
+	private ImageView photoPreview;
+	/**
+	 * Pole, w które użytkownik wpisuje opis dziury.
+	 */
+	private EditText descriptEditor;
+	/**
+	 * Pole, w którym użytkownik się podpisuje.
+	 */
+	private EditText signEditor;
+	/**
+	 * Spinner zawierający listę odbiorców maila.
+	 */
+	private Spinner recipientList;
+	/**
+	 * Boolean przechowujący wybór użytkownika. Wybór lokalizacji manualny lub automatyczny.
+	 */
+	private boolean manual;
+	/**
+	 * TODO
+	 */
+	private GoogleApiClient mGoogleApiClient;
+	/**
+	 * TODO
+	 */
+	private Location mLastKnownLocation;
+	/**
+	 * Boolean przechowujący flagę, czy zostało już wykonane zdjęcie do raportu.
+	 */
+	private boolean pictureAdded;
+	/**
+	 * Przechowuje lokalizację.
+	 */
+	LatLng location;
 
-    /**
-     * W metodzie onCreate() polom przypisywane są odpowiednie referencje. Zastosowany został też wzorzec treeObserver. W związku z tym, że ImageView długo ma wymiary 0px x 0px
-     * nie jest możliwe przeskalowanie zdjęcia. Żeby użytkownik nie wysypał aplikacji zbyt dużym zdjęciem, dodajemy do imageView onGlobalLayoutListener. Jego metoda onGlobalLayout()
-     * wywołuje się, gdy layout robi się globalny. Aby kod w metodzie nie wywoływał się ciągle, pierwsza rzecz jaką robimy to usuwamy listenera, a potem wypełniamy photoPreview.
-     *
-     * @param savedInstanceState Bundle, który przy pierwszym tworzeniu aktywności jest nullem, a później przechowuje stan aplikacji sprzed zabicia.
-     */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.form_layout);
-        db = new SQLiteDeepHoleHelper(this);
-        pictureAdded = false;
-        photoPreview = (ImageView) findViewById(R.id.hole_photo);
-        photoPreview.setImageResource(R.drawable.camera_icon);
+	/**
+	 * W metodzie onCreate() polom przypisywane są odpowiednie referencje. Zastosowany został też wzorzec treeObserver. W związku z tym, że ImageView długo ma wymiary 0px x 0px
+	 * nie jest możliwe przeskalowanie zdjęcia. Żeby użytkownik nie wysypał aplikacji zbyt dużym zdjęciem, dodajemy do imageView onGlobalLayoutListener. Jego metoda onGlobalLayout()
+	 * wywołuje się, gdy layout robi się globalny. Aby kod w metodzie nie wywoływał się ciągle, pierwsza rzecz jaką robimy to usuwamy listenera, a potem wypełniamy photoPreview.
+	 *
+	 * @param savedInstanceState Bundle, który przy pierwszym tworzeniu aktywności jest nullem, a później przechowuje stan aplikacji sprzed zabicia.
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.form_layout);
+		db = new SQLiteDeepHoleHelper(this);
+		pictureAdded = false;
+		photoPreview = (ImageView) findViewById(R.id.hole_photo);
+		photoPreview.setImageResource(R.drawable.camera_icon);
 
-        descriptEditor = (EditText) findViewById(R.id.description);
-        signEditor = (EditText) findViewById(R.id.sender_signature);
+		descriptEditor = (EditText) findViewById(R.id.description);
+		signEditor = (EditText) findViewById(R.id.sender_signature);
 
-        recipientList = (Spinner) findViewById(R.id.recipient_list);
+		recipientList = (Spinner) findViewById(R.id.recipient_list);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.recipient_list, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        recipientList.setAdapter(adapter);
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+				R.array.recipient_list, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		recipientList.setAdapter(adapter);
 
-        RadioGroup localizationMenu = (RadioGroup) findViewById(R.id.localization_menu);
-        localizationMenu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                manual = (checkedId == R.id.manual_radio_button);
-            }
-        });
-        if (savedInstanceState == null) {
-            return;
-        }
-        if (savedInstanceState.containsKey(ADDED)) {
-            if (savedInstanceState.getBoolean(ADDED)) {
-                try {
-                    currentPhotoPath = savedInstanceState.getString(PATH);
+		RadioGroup localizationMenu = (RadioGroup) findViewById(R.id.localization_menu);
+		localizationMenu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				manual = (checkedId == R.id.manual_radio_button);
+			}
+		});
+		if (savedInstanceState == null) {
+			return;
+		}
+		if (savedInstanceState.containsKey(ADDED)) {
+			if (savedInstanceState.getBoolean(ADDED)) {
+				try {
+					currentPhotoPath = savedInstanceState.getString(PATH);
 
-                    photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            // usunac observer, zeby odpalil tylko raz
-                            photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+					photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							// usunac observer, zeby odpalil tylko raz
+							photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-                            setPic();
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+							setPic();
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            setPic();
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+			setPic();
 //PÓKI CO NIE KASOWAĆ
-            /*File photo = new File(currentPhotoPath);
-            Bitmap bmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
+			/*File photo = new File(currentPhotoPath);
+			Bitmap bmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
 			photoPreview.setImageBitmap(bmap);*/
-            //photoPreview.setImageURI(Uri.fromFile(photo));
+			//photoPreview.setImageURI(Uri.fromFile(photo));
 
 			/*Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+			Bitmap imageBitmap = (Bitmap) extras.get("data");
 			photoPreview.setImageBitmap(imageBitmap);*/
-        } else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
-            Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
-            location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
+		} else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
+			Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
+			location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
 
-            Log.d("Powrót z aktywności map", location.toString());
-            sendEmail();
-            /*
-            String desc = descriptEditor.getText().toString();
-            String recipient = recipientList.getSelectedItem().toString();
-            String signature = signEditor.getText().toString();
-            TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-            String phoneNumber = tMgr.getLine1Number();
+			Log.d("Powrót z aktywności map", location.toString());
+			sendEmail();
+			/*
+			String desc = descriptEditor.getText().toString();
+			String recipient = recipientList.getSelectedItem().toString();
+			String signature = signEditor.getText().toString();
+			TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+			String phoneNumber = tMgr.getLine1Number();
 
-            //uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
-            Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
+			//uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
+			Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
 
-            Log.d("Wygenerowany formularz", form.toString());
+			Log.d("Wygenerowany formularz", form.toString());
 
-            db.insertForm(form);
+			db.insertForm(form);
 
-            //wysyłanie maila
-            Intent emailIntent = new Intent(Intent.ACTION_SEND);
-            emailIntent.setType("text/plain");
-            emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
-            emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
-            emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
-                    + "Localization: " + location.toString() + "\n"
-                    + "Contact: " + phoneNumber + "\n"
-                    + "Signature: " + signature);
+			//wysyłanie maila
+			Intent emailIntent = new Intent(Intent.ACTION_SEND);
+			emailIntent.setType("text/plain");
+			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
+			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
+			emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
+					+ "Localization: " + location.toString() + "\n"
+					+ "Contact: " + phoneNumber + "\n"
+					+ "Signature: " + signature);
 
-            File root = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES);
-            //File file = new File(root, currentPhotoPath);
-            File file = new File(currentPhotoPath);
-            if (!file.exists() || !file.canRead()) {
-                Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
-                return;
-            }
-            Uri uri = Uri.fromFile(file);
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+			File root = Environment.getExternalStoragePublicDirectory(
+					Environment.DIRECTORY_PICTURES);
+			//File file = new File(root, currentPhotoPath);
+			File file = new File(currentPhotoPath);
+			if (!file.exists() || !file.canRead()) {
+				Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
+				return;
+			}
+			Uri uri = Uri.fromFile(file);
+			emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
-            try {
-                startActivity(Intent.createChooser(emailIntent, "sending mail"));
-                Toast.makeText(getApplicationContext(), "Form was sent successfully.",
-                        Toast.LENGTH_LONG).show();
-            } catch (android.content.ActivityNotFoundException ex) {
-                Toast.makeText(getApplicationContext(), "There is no mail client installed.",
-                        Toast.LENGTH_LONG).show();
-            }
-            finish();
-            */
-        }
-    }
+			try {
+				startActivity(Intent.createChooser(emailIntent, "sending mail"));
+				Toast.makeText(getApplicationContext(), "Form was sent successfully.",
+						Toast.LENGTH_LONG).show();
+			} catch (android.content.ActivityNotFoundException ex) {
+				Toast.makeText(getApplicationContext(), "There is no mail client installed.",
+						Toast.LENGTH_LONG).show();
+			}
+			finish();
+			*/
+		}
+	}
 
-    /**
-     * TODO
-     * @param view
-     */
-    public void takePhoto(View view) {
-        dispatchPhotoIntent();
-    }
+	/**
+	 * TODO
+	 * @param view
+	 */
+	public void takePhoto(View view) {
+		dispatchPhotoIntent();
+	}
 
-    /**
-     * TODO
-     */
-    private void dispatchPhotoIntent() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
+	/**
+	 * TODO
+	 */
+	private void dispatchPhotoIntent() {
+		Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if (intent.resolveActivity(getPackageManager()) != null) {
 
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                Log.d("dispatchPhotoIntent", "Problem z utworzeniem pliku!");
-            }
+			File photoFile = null;
+			try {
+				photoFile = createImageFile();
+			} catch (IOException ex) {
+				Log.d("dispatchPhotoIntent", "Problem z utworzeniem pliku!");
+			}
 
-            if (photoFile != null) {
-                Uri currentPhotoUri = Uri.fromFile(photoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        currentPhotoUri);
-                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
+			if (photoFile != null) {
+				Uri currentPhotoUri = Uri.fromFile(photoFile);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT,
+						currentPhotoUri);
+				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+			}
+		}
+	}
 
-    /**
-     * TODO
-     * @return
-     * @throws IOException
-     */
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+	/**
+	 * TODO
+	 * @return
+	 * @throws IOException
+	 */
+	private File createImageFile() throws IOException {
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES);
+		File image = File.createTempFile(
                 imageFileName,
                 ".jpg",
                 storageDir);
 
-        currentPhotoPath = image.getAbsolutePath();//"file:" + image.getAbsolutePath();
-        return image;
-    }
+		currentPhotoPath = image.getAbsolutePath();//"file:" + image.getAbsolutePath();
+		return image;
+	}
 
-    /**
-     * Metoda, która przeskalowuje zdjęcie w celu zapobiegnięcia zapełnieniu pamięci gigantyczną grafiką.
-     * Ustawia w photoPreview zdjęcie, które jest zapisane w currentPhotoPath
-     */
-    private void setPic() {
-        int targetW = photoPreview.getWidth();
-        int targetH = photoPreview.getHeight();
+	/**
+	 * Metoda, która przeskalowuje zdjęcie w celu zapobiegnięcia zapełnieniu pamięci gigantyczną grafiką.
+	 * Ustawia w photoPreview zdjęcie, które jest zapisane w currentPhotoPath
+	 */
+	private void setPic() {
+		int targetW = photoPreview.getWidth();
+		int targetH = photoPreview.getHeight();
 
-        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
-        bmOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        int photoW = bmOptions.outWidth;
-        int photoH = bmOptions.outHeight;
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
-        bmOptions.inJustDecodeBounds = false;
-        bmOptions.inSampleSize = scaleFactor;
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = scaleFactor;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        photoPreview.setImageBitmap(bitmap);
-        pictureAdded = true;
-    }
+		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+		photoPreview.setImageBitmap(bitmap);
+		pictureAdded = true;
+	}
 
-    /**
-     * Metoda sprawdzająca przed wysłaniem maila czy wszystkie dane są poprawne.
-     * @param view
-     */
-    public void validateMailData(View view) {
-        String recipient = recipientList.getSelectedItem().toString();
+	/**
+	 * Metoda sprawdzająca przed wysłaniem maila czy wszystkie dane są poprawne.
+	 * @param view
+	 */
+	public void validateMailData(View view) {
+		String recipient = recipientList.getSelectedItem().toString();
 
-        if (recipient.equals("Recipient")) {
-            Toast.makeText(getApplicationContext(), "Please choose a recipient!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
+		if (currentPhotoPath == null) {
+			Toast.makeText(getApplicationContext(), "Please take a picture!",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (recipient.equals("Recipient")) {
+			Toast.makeText(getApplicationContext(), "Please choose a recipient!",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
 
-        if (currentPhotoPath == null) {
-            Toast.makeText(getApplicationContext(), "Please take a picture!",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (manual) {
-            Intent intent = new Intent(this, LocationActivity.class);
-            startActivityForResult(intent, REQUEST_LOCATION);
-        } else {
-            if (mGoogleApiClient == null) {
-                mGoogleApiClient = new GoogleApiClient.Builder(this)
-                        .addConnectionCallbacks(this)
-                        .addOnConnectionFailedListener(this)
-                        .addApi(LocationServices.API).build();
-            }
-            mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-            if (mLastKnownLocation != null) {
-                //nie można pobrać lokalizacji nawet przy włączonym GPS
-                Log.d("Lokalizacja", mLastKnownLocation.toString());
-            } else {
-                Intent intent = new Intent(this, LocationActivity.class);
-                startActivityForResult(intent, REQUEST_LOCATION);
-                Toast.makeText(getApplicationContext(), "Can't fetch your last location.",
+		String pesel = signEditor.getText().toString();
+		if (pesel.length() != 11) {
+			Toast.makeText(getApplicationContext(), "Wrong length of PESEL!",
+					Toast.LENGTH_LONG).show();
+			return;
+		} else {
+			int res = 0;
+		//    a+3b+7c+9d+e+3f+7g+9h+i+3j+k
+            int tab[] = {1,3,7,9,1,3,7,9,1,3,1};
+			for (int i=0; i < 11; i++) {
+                res += tab[i] * (pesel.charAt(i) - '0');
+			}
+            if (res % 10 != 0) {
+                Toast.makeText(getApplicationContext(), "Invalid PESEL!",
                         Toast.LENGTH_LONG).show();
+                return;
             }
+		}
 
-        }
-    }
+		if (manual) {
+			Intent intent = new Intent(this, LocationActivity.class);
+			startActivityForResult(intent, REQUEST_LOCATION);
+		} else {
+			if (mGoogleApiClient == null) {
+				mGoogleApiClient = new GoogleApiClient.Builder(this)
+						.addConnectionCallbacks(this)
+						.addOnConnectionFailedListener(this)
+						.addApi(LocationServices.API).build();
+			}
+			mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
-    /**
-     * Metoda wysyłająca startująca chosera ACTION_SEND oraz pakująca zgłoszenie do bazy danych.
-     */
-    public void sendEmail(){
-        String desc = descriptEditor.getText().toString();
-        String recipient = recipientList.getSelectedItem().toString();
-        String signature = signEditor.getText().toString();
-        TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String phoneNumber = tMgr.getLine1Number();
+			if (mLastKnownLocation != null) {
+				//nie można pobrać lokalizacji nawet przy włączonym GPS
+				Log.d("Lokalizacja", mLastKnownLocation.toString());
+			} else {
+				Intent intent = new Intent(this, LocationActivity.class);
+				startActivityForResult(intent, REQUEST_LOCATION);
+				Toast.makeText(getApplicationContext(), "Can't fetch your last location.",
+						Toast.LENGTH_LONG).show();
+			}
 
-        //uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
-        Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
+		}
+	}
 
-        Log.d("Wygenerowany formularz", form.toString());
+	/**
+	 * Metoda wysyłająca startująca chosera ACTION_SEND oraz pakująca zgłoszenie do bazy danych.
+	 */
+	public void sendEmail(){
+		String desc = descriptEditor.getText().toString();
+		String recipient = recipientList.getSelectedItem().toString();
+		String signature = signEditor.getText().toString();
+		TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+		String phoneNumber = tMgr.getLine1Number();
 
-        db.insertForm(form);
+		//uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
+		Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
 
-        //wysyłanie maila
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("text/plain");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
-                + "Localization: " + location.toString() + "\n"
-                + "Contact: " + phoneNumber + "\n"
-                + "Signature: " + signature);
+		Log.d("Wygenerowany formularz", form.toString());
 
-        File root = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
-        //File file = new File(root, currentPhotoPath);
-        File file = new File(currentPhotoPath);
-        if (!file.exists() || !file.canRead()) {
-            Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
-            return;
-        }
-        Uri uri = Uri.fromFile(file);
-        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		db.insertForm(form);
 
-        try {
-            startActivity(Intent.createChooser(emailIntent, "sending mail"));
-            Toast.makeText(getApplicationContext(), "Form was sent successfully.",
-                    Toast.LENGTH_LONG).show();
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getApplicationContext(), "There is no mail client installed.",
-                    Toast.LENGTH_LONG).show();
-        }
-        finish();
-    }
+		//wysyłanie maila
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+		emailIntent.setType("text/plain");
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
+		emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
+				+ "Localization: " + location.toString() + "\n"
+				+ "Contact: " + phoneNumber + "\n"
+				+ "Signature: " + signature);
+
+		File root = Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES);
+		//File file = new File(root, currentPhotoPath);
+		File file = new File(currentPhotoPath);
+		if (!file.exists() || !file.canRead()) {
+			Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
+			return;
+		}
+		Uri uri = Uri.fromFile(file);
+		emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+
+		try {
+			startActivity(Intent.createChooser(emailIntent, "sending mail"));
+			Toast.makeText(getApplicationContext(), "Form was sent successfully.",
+					Toast.LENGTH_LONG).show();
+		} catch (android.content.ActivityNotFoundException ex) {
+			Toast.makeText(getApplicationContext(), "There is no mail client installed.",
+					Toast.LENGTH_LONG).show();
+		}
+		finish();
+	}
 
 
-    @Override
-    public void onConnected(Bundle bundle) {
+	@Override
+	public void onConnected(Bundle bundle) {
 
-    }
+	}
 
-    @Override
-    public void onConnectionSuspended(int i) {
+	@Override
+	public void onConnectionSuspended(int i) {
 
-    }
+	}
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
 
-    }
+	}
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.d("debug", "onSaveInstanceState");
-        super.onSaveInstanceState(outState);
-        if (pictureAdded) {
-            outState.putBoolean(ADDED, true);
-            outState.putString(PATH, currentPhotoPath);
-        } else {
-            outState.putBoolean(ADDED, false);
-        }
-    }
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		Log.d("debug", "onSaveInstanceState");
+		super.onSaveInstanceState(outState);
+		if (pictureAdded) {
+			outState.putBoolean(ADDED, true);
+			outState.putString(PATH, currentPhotoPath);
+		} else {
+			outState.putBoolean(ADDED, false);
+		}
+	}
 }
