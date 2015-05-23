@@ -55,8 +55,4 @@ public class DeepHoleActivity extends Activity {
 		Intent intent = new Intent(this, FormActivity.class);
 		startActivity(intent);
 	}
-
-	public void onDraft(View view) {
-		//metoda uruchamia aktywność, w której użytkownik może wypełnić ostatni nieskończony formularz
-	}
 }

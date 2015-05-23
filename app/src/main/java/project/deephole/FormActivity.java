@@ -5,6 +5,7 @@ package project.deephole;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.location.Location;
@@ -14,11 +15,14 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -54,11 +58,17 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	/**
 	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
 	 */
-	static final String ADDED = "added";
+	static final String ADDED_KEY = "added";
 	/**
 	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
 	 */
-	static final String PATH = "path";
+	static final String PATH_KEY = "path";
+
+	static final String DESC_KEY = "description";
+	static final String RECIPIENT_KEY = "recipient";
+	static final String LOC_PREF_KEY = "localization";
+	static final String PESEL_KEY = "pesel";
+
 	private SQLiteDeepHoleHelper db;
 	/**
 	 * Pole przechowujące ścieżkę zdjęcia, które zostało zrobione.
@@ -134,13 +144,35 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 				manual = (checkedId == R.id.manual_radio_button);
 			}
 		});
+
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		if (sharedPref.contains(PATH_KEY)) {
+			currentPhotoPath = sharedPref.getString(PATH_KEY, null);
+			setPic();
+		}
+		if (sharedPref.contains(DESC_KEY))
+			descriptEditor.setText(sharedPref.getString(DESC_KEY, ""));
+		if (sharedPref.contains(RECIPIENT_KEY)) {
+			int recipient = sharedPref.getInt(RECIPIENT_KEY, 0);
+			Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
+			recipients.setSelection(recipient);
+		}
+		if (sharedPref.contains(LOC_PREF_KEY)) {
+			int pref = sharedPref.getInt(LOC_PREF_KEY, 0);
+			RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
+			locMenu.check(pref);
+		}
+		if (sharedPref.contains(PESEL_KEY))
+			signEditor.setText(sharedPref.getString(PESEL_KEY, ""));
+
+
 		if (savedInstanceState == null) {
 			return;
 		}
-		if (savedInstanceState.containsKey(ADDED)) {
-			if (savedInstanceState.getBoolean(ADDED)) {
+		if (savedInstanceState.containsKey(ADDED_KEY)) {
+			if (savedInstanceState.getBoolean(ADDED_KEY)) {
 				try {
-					currentPhotoPath = savedInstanceState.getString(PATH);
+					currentPhotoPath = savedInstanceState.getString(PATH_KEY);
 
 					photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 						@Override
@@ -225,6 +257,46 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_form, menu);
+		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		int id = item.getItemId();
+
+		if (id == R.id.reset) {
+			resetForm();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+
+		if(currentPhotoPath != null)
+			editor.putString(PATH_KEY, currentPhotoPath);
+
+		editor.putString(DESC_KEY, descriptEditor.getText().toString());
+
+		Spinner spinner = (Spinner) findViewById(R.id.recipient_list);
+		int recipient = spinner.getSelectedItemPosition();
+		editor.putInt(RECIPIENT_KEY, recipient);
+
+		RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
+		int locPref = locMenu.getCheckedRadioButtonId();
+		editor.putInt(LOC_PREF_KEY, locPref);
+
+		editor.putString(PESEL_KEY, signEditor.getText().toString());
+		editor.commit();
+	}
+
 	/**
 	 * TODO
 	 * @param view
@@ -271,7 +343,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
                 ".jpg",
                 storageDir);
 
-		currentPhotoPath = image.getAbsolutePath();//"file:" + image.getAbsolutePath();
+		currentPhotoPath = image.getAbsolutePath();
 		return image;
 	}
 
@@ -280,6 +352,11 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	 * Ustawia w photoPreview zdjęcie, które jest zapisane w currentPhotoPath
 	 */
 	private void setPic() {
+		if(currentPhotoPath == null) {
+			photoPreview.setImageResource(R.drawable.camera_icon);
+			return;
+		}
+
 		int targetW = photoPreview.getWidth();
 		int targetH = photoPreview.getHeight();
 
@@ -409,6 +486,19 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		finish();
 	}
 
+	public void resetForm() {
+		Log.d("debug", "resetForm");
+		currentPhotoPath = null;
+		descriptEditor.setText("");
+		signEditor.setText("");
+
+		photoPreview.setImageResource(R.drawable.camera_icon);
+		Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
+		recipients.setSelection(0);
+		RadioButton btn = (RadioButton) findViewById(R.id.auto_radio_button);
+		btn.setChecked(true);
+		pictureAdded = false;
+	}
 
 	@Override
 	public void onConnected(Bundle bundle) {
@@ -430,10 +520,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		Log.d("debug", "onSaveInstanceState");
 		super.onSaveInstanceState(outState);
 		if (pictureAdded) {
-			outState.putBoolean(ADDED, true);
-			outState.putString(PATH, currentPhotoPath);
+			outState.putBoolean(ADDED_KEY, true);
+			outState.putString(PATH_KEY, currentPhotoPath);
 		} else {
-			outState.putBoolean(ADDED, false);
+			outState.putBoolean(ADDED_KEY, false);
 		}
 	}
 }

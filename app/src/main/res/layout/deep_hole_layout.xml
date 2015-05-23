@@ -25,14 +25,4 @@
         android:textAllCaps="false"
         android:onClick="onFormulate"/>
 
-	<Button
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
-		android:text="Drafts"
-		android:id="@+id/draft_btn"
-		android:textAllCaps="false"
-		android:layout_below="@+id/report_button"
-		android:layout_centerHorizontal="true"
-		android:onClick="onDraft"/>
-
 </RelativeLayout>
