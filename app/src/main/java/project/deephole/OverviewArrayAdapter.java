@@ -1,6 +1,9 @@
 package project.deephole;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,9 +35,11 @@ public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 		TextView dscView = (TextView) rowView.findViewById(R.id.description);
 		TextView locView = (TextView) rowView.findViewById(R.id.location);
 
+		if(hole.getPhotoPath() == null)
+			Log.d("getView", "null photo path");
+		new FetchPhotoTask(photoView, hole.getPhotoPath()).execute();
 		dscView.setText(hole.getDesc());
 		locView.setText(hole.getReadableLocation());
-		//photoView.setImageResource(R.drawable.pothole_icon);
 
 		return rowView;
 	}

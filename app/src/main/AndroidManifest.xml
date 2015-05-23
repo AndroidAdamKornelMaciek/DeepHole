@@ -57,6 +57,10 @@
             android:name=".FullScreenHoleActivity"
             android:label="@string/title_activity_full_screen_hole" >
         </activity>
+        <activity
+            android:name=".HoleRadarActivity"
+            android:label="@string/title_activity_hole_radar" >
+        </activity>
     </application>
 
 </manifest>

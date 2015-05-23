@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,6 +22,11 @@ public class DeepHoleActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.deep_hole_layout);
+
+		/*SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
+		ArrayList<Form> forms = db.getAllForms();
+		for(Form f: forms)
+			db.deleteForm(f);*/
 	}
 
 

@@ -16,7 +16,8 @@ public class OverviewActivity extends ListActivity {
 
 	static final String PATH_KEY = "path";
 	static final String DESC_KEY = "description";
-	static final String RECIPIENT_KEY = "localization";
+	static final String LOCAL_KEY = "localization";
+	static final String READ_LOCAL_KEY = "readable_localization";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +26,7 @@ public class OverviewActivity extends ListActivity {
 		SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
 
 		ListView listView = getListView();
-		ArrayList<Hole> holes = db.getAllHoles();
+		final ArrayList<Hole> holes = db.getAllHoles();
 		OverviewArrayAdapter adapter = new OverviewArrayAdapter(this, holes);
 		listView.setAdapter(adapter);
 
@@ -34,10 +35,15 @@ public class OverviewActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view,
 									int position, long id) {
-				//tutaj pełny ekran dla danej dziury
-				//chcemy przesłać opis, zdjęcie i lokalziację
+				Hole hole = holes.get(position);
 				Intent fullScreen = new Intent(getApplicationContext(), FullScreenHoleActivity.class);
+				//potem do usunięcia
 				fullScreen.putExtra("klucz", position);
+				fullScreen.putExtra(PATH_KEY, hole.getPhotoPath());
+				fullScreen.putExtra(DESC_KEY, hole.getDesc());
+				fullScreen.putExtra(LOCAL_KEY, hole.getLocation());
+				fullScreen.putExtra(READ_LOCAL_KEY, hole.getReadableLocation());
+
 				startActivity(fullScreen);
 			}
 

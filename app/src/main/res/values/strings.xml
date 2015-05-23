@@ -16,5 +16,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_overview">OverviewActivity</string>
     <string name="title_activity_full_screen_hole">FullScreenHoleActivity</string>
+    <string name="title_activity_hole_radar">HoleRadarActivity</string>
 
 </resources>

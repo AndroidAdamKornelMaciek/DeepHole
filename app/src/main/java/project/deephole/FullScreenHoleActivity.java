@@ -1,5 +1,6 @@
 package project.deephole;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,8 +9,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 
 public class FullScreenHoleActivity extends ActionBarActivity {
+
+	private String location;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +23,7 @@ public class FullScreenHoleActivity extends ActionBarActivity {
 
 		TextView txt = (TextView) findViewById(R.id.test);
 		Bundle extras = getIntent().getExtras();
+		location = extras.getString(OverviewActivity.LOCAL_KEY);
 		int pos = extras.getInt("klucz");
 		txt.setText(pos + "");
 
@@ -49,6 +55,8 @@ public class FullScreenHoleActivity extends ActionBarActivity {
 	}
 
 	public void navigateToMap(View view) {
-		//przekierowanie do map
+		Intent holeRadar = new Intent(this, HoleRadarActivity.class);
+		holeRadar.putExtra(OverviewActivity.LOCAL_KEY, location);
+		startActivity(holeRadar);
 	}
 }

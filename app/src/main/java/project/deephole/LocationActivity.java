@@ -43,7 +43,6 @@ public class LocationActivity extends Activity {
 				marker = map.addMarker(new MarkerOptions()
 								.position(latLng)
 								.title("Here is a deep hole...")
-										//.icon(BitmapDescriptorFactory.fromResource(R.drawable.flag))
 								.draggable(true)
 				);
 				picked = true;
