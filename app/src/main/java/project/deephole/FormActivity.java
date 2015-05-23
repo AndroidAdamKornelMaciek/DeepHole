@@ -146,9 +146,19 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		});
 
 		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		if (sharedPref.contains(PATH_KEY)) {
+		if(sharedPref.contains(ADDED_KEY))
+			pictureAdded = sharedPref.getBoolean(ADDED_KEY, false);
+		if (sharedPref.contains(PATH_KEY) && pictureAdded) {
 			currentPhotoPath = sharedPref.getString(PATH_KEY, null);
-			setPic();
+			photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+				@Override
+				public void onGlobalLayout() {
+					// usunac observer, zeby odpalil tylko raz
+					photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+
+					setPic();
+				}
+			});
 		}
 		if (sharedPref.contains(DESC_KEY))
 			descriptEditor.setText(sharedPref.getString(DESC_KEY, ""));
@@ -294,6 +304,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		editor.putInt(LOC_PREF_KEY, locPref);
 
 		editor.putString(PESEL_KEY, signEditor.getText().toString());
+		editor.putBoolean(ADDED_KEY, pictureAdded);
 		editor.commit();
 	}
 
@@ -483,6 +494,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			Toast.makeText(getApplicationContext(), "There is no mail client installed.",
 					Toast.LENGTH_LONG).show();
 		}
+		resetForm();
 		finish();
 	}
 

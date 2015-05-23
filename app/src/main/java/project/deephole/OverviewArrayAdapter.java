@@ -10,12 +10,12 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-public class OverviewArrayAdapter extends ArrayAdapter<String> {
+public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 
 	private Context context;
-	private ArrayList<String> values;
+	private ArrayList<Hole> values;
 
-	public OverviewArrayAdapter(Context context, ArrayList<String> values) {
+	public OverviewArrayAdapter(Context context, ArrayList<Hole> values) {
 		super(context, R.layout.overview_line_layout, R.id.location, values);
 		this.context = context;
 		this.values = values;
@@ -27,9 +27,14 @@ public class OverviewArrayAdapter extends ArrayAdapter<String> {
 				.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		View rowView = inflater.inflate(R.layout.overview_line_layout, parent, false);
 
-		TextView dscView = (TextView) rowView.findViewById(R.id.description);
+		Hole hole = values.get(position);
 		ImageView photoView = (ImageView) rowView.findViewById(R.id.photo);
-		photoView.setImageResource(R.drawable.flag);
+		TextView dscView = (TextView) rowView.findViewById(R.id.description);
+		TextView locView = (TextView) rowView.findViewById(R.id.location);
+
+		dscView.setText(hole.getDesc());
+		locView.setText(hole.getReadableLocation());
+		//photoView.setImageResource(R.drawable.pothole_icon);
 
 		return rowView;
 	}

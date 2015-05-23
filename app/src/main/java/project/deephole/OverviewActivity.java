@@ -1,6 +1,7 @@
 package project.deephole;
 
 import android.app.ListActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +14,10 @@ import java.util.ArrayList;
 
 public class OverviewActivity extends ListActivity {
 
+	static final String PATH_KEY = "path";
+	static final String DESC_KEY = "description";
+	static final String RECIPIENT_KEY = "localization";
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -20,8 +25,8 @@ public class OverviewActivity extends ListActivity {
 		SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
 
 		ListView listView = getListView();
-		ArrayList<String> locations = db.getAllLocations();
-		OverviewArrayAdapter adapter = new OverviewArrayAdapter(this, locations);
+		ArrayList<Hole> holes = db.getAllHoles();
+		OverviewArrayAdapter adapter = new OverviewArrayAdapter(this, holes);
 		listView.setAdapter(adapter);
 
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -29,8 +34,11 @@ public class OverviewActivity extends ListActivity {
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view,
 									int position, long id) {
-				final String item = (String) parent.getItemAtPosition(position);
 				//tutaj pełny ekran dla danej dziury
+				//chcemy przesłać opis, zdjęcie i lokalziację
+				Intent fullScreen = new Intent(getApplicationContext(), FullScreenHoleActivity.class);
+				fullScreen.putExtra("klucz", position);
+				startActivity(fullScreen);
 			}
 
 		});

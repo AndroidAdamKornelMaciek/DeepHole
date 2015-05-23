@@ -108,23 +108,27 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		return forms;
 	}
 
-	public ArrayList<String> getAllLocations() {
-		ArrayList<String> locations = new ArrayList<>();
+	public ArrayList<Hole> getAllHoles() {
+		ArrayList<Hole> holes = new ArrayList<>();
 
-		String query = "SELECT " + KEY_LOCALIZATION + " FROM " + TABLE_DEEP_HOLE_FORMS;
+		String query = "SELECT " + KEY_PHOTO_PATH + ", " + KEY_DESCRIPTION
+				+", " + KEY_LOCALIZATION + " FROM " + TABLE_DEEP_HOLE_FORMS;
 
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(query, null);
 
 		if (cursor.moveToFirst()) {
 			do {
-				String location = cursor.getString(0);
-				locations.add(location);
+				String photoPath = cursor.getString(0);
+				String description = cursor.getString(1);
+				String location = cursor.getString(2);
+				Hole hole = new Hole(photoPath, description, location);
+				holes.add(hole);
 			} while (cursor.moveToNext());
 		}
 
-		Log.d("getAllLocations()", locations.toString());
-		return locations;
+		Log.d("getAllHoles()", holes.toString());
+		return holes;
 	}
 
 	public int updateForm(Form form) {

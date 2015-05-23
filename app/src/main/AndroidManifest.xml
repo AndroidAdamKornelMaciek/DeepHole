@@ -31,8 +31,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".FormActivity"
-            android:configChanges="keyboardHidden">
+        <activity
+            android:name=".FormActivity"
+            android:configChanges="keyboardHidden" >
         </activity>
         <activity android:name=".LocationActivity" >
         </activity>
@@ -51,6 +52,10 @@
         <activity
             android:name=".OverviewActivity"
             android:label="@string/title_activity_overview" >
+        </activity>
+        <activity
+            android:name=".FullScreenHoleActivity"
+            android:label="@string/title_activity_full_screen_hole" >
         </activity>
     </application>
 
