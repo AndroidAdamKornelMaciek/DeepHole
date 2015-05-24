@@ -2,21 +2,16 @@ package project.deephole;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
 //TO JEST GŁÓWNA AKTYWNOŚĆ PANOWIE, OTWIERA SIĘ PO URUCHOMIENIU
 
 public class DeepHoleActivity extends Activity {
+    //kto jest zalogowany, trzeba to przerobic na startactivityforresult, ale nie mam teraz juz sily tego robic
+    public static int id;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +59,11 @@ public class DeepHoleActivity extends Activity {
 
     public void onLogin(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
+
+    public void onRegister(View view) {
+        Intent intent = new Intent(this, RegisterAccountActivity.class);
         startActivity(intent);
     }
 }

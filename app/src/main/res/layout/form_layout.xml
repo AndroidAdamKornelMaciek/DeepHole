@@ -38,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
-        android:layout_above="@+id/sender_signature"
+        android:layout_above="@+id/loggedUser"
         android:layout_marginBottom="10dp"
     >
 
@@ -57,7 +57,7 @@
             android:id="@+id/manual_radio_button"
             android:layout_gravity="left" />
     </RadioGroup>
-
+<!--
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,6 +69,17 @@
         android:gravity="center"
         android:layout_marginBottom="10dp"
         android:hint="Please insert PESEL."/>
+-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="15"
+        android:id="@+id/loggedUser"
+        android:layout_above="@+id/confirm_button"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:text="Who Is Logged?"/>
 
     <Button
         android:layout_width="wrap_content"

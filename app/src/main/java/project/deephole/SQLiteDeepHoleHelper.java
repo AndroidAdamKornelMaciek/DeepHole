@@ -9,13 +9,21 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import java.util.ArrayList;
-import java.util.List;
 
 //KLASA ODPOWIADA ZA KOMUNIKACJĘ Z BAZĄ DANYCH
 public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 
 	private static final int DATABASE_VERSION = 1;
 	private static final String DATABASE_NAME = "DeepHoleDB";
+
+	private static final String TABLE_ACCOUNTS = "Accounts";
+	private static final String KEY_ACC_ID = "ID";
+	private static final String KEY_NAME = "Name";
+	private static final String KEY_PASSWORD = "Password";
+	private static final String KEY_EMAIL = "EMail";
+	private static final String KEY_PHONE = "Phone";
+	private static final String KEY_PESEL = "Pesel";
+	private static final String[] ACCOUNT_COLUMNS = {KEY_NAME, KEY_PASSWORD, KEY_EMAIL, KEY_PHONE, KEY_PESEL};
 
 	private static final String TABLE_DEEP_HOLE_FORMS = "DeepHoleForms";
 	private static final String KEY_ID = "ID";
@@ -34,6 +42,16 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onCreate(SQLiteDatabase db) {
+        String CREATE_ACCOUNTS_TABLE = "CREATE TABLE " + TABLE_ACCOUNTS + " ( " +
+                KEY_ACC_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                KEY_NAME + " TEXT, " +
+                KEY_PASSWORD + " TEXT, " +
+                KEY_EMAIL + " TEXT, " +
+                KEY_PHONE + " TEXT, " +
+                KEY_PESEL + " TEXT )";
+
+        db.execSQL(CREATE_ACCOUNTS_TABLE);
+
 		String CREATE_DEEP_HOLE_TABLE = "CREATE TABLE DeepHoleForms ( " +
 				"ID INTEGER PRIMARY KEY AUTOINCREMENT, " +
 				"PhotoPath TEXT, " +
@@ -49,6 +67,7 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		db.execSQL("DROP TABLE IF EXISTS DeepHoleForms");
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ACCOUNTS);
 		this.onCreate(db);
 	}
 
@@ -63,18 +82,29 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		Log.d("insertForm", form.toString());
 	}
 
+    public void insertAccountForm(AccountForm form){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = contentValuesBuilderForAccounts(form);
+
+        db.insert(TABLE_ACCOUNTS, null, values);
+        db.close();
+
+        Log.d("insertForm", form.toString());
+    }
+
 	public Form selectForm(int id){
 		SQLiteDatabase db = this.getReadableDatabase();
 
 		Cursor cursor =
 				db.query(TABLE_DEEP_HOLE_FORMS,
-						COLUMNS,
-						KEY_ID + " = ?",
-						new String[] { String.valueOf(id) },
-						null, // group by
-						null, // having
-						null, // order by
-						null); // limit
+                        COLUMNS,
+                        KEY_ID + " = ?",
+                        new String[]{String.valueOf(id)},
+                        null, // group by
+                        null, // having
+                        null, // order by
+                        null); // limit
 
 		if (cursor != null)
 			cursor.moveToFirst();
@@ -108,28 +138,64 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		return forms;
 	}
 
-	public ArrayList<Hole> getAllHoles() {
-		ArrayList<Hole> holes = new ArrayList<>();
+    public ArrayList<Hole> getAllHoles() {
+        ArrayList<Hole> holes = new ArrayList<>();
 
-		String query = "SELECT " + KEY_PHOTO_PATH + ", " + KEY_DESCRIPTION
-				+", " + KEY_LOCALIZATION + " FROM " + TABLE_DEEP_HOLE_FORMS;
+        String query = "SELECT " + KEY_PHOTO_PATH + ", " + KEY_DESCRIPTION
+                +", " + KEY_LOCALIZATION + " FROM " + TABLE_DEEP_HOLE_FORMS;
 
-		SQLiteDatabase db = this.getWritableDatabase();
-		Cursor cursor = db.rawQuery(query, null);
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
 
-		if (cursor.moveToFirst()) {
-			do {
-				String photoPath = cursor.getString(0);
-				String description = cursor.getString(1);
-				String location = cursor.getString(2);
-				Hole hole = new Hole(photoPath, description, location);
-				holes.add(hole);
-			} while (cursor.moveToNext());
-		}
+        if (cursor.moveToFirst()) {
+            do {
+                String photoPath = cursor.getString(0);
+                String description = cursor.getString(1);
+                String location = cursor.getString(2);
+                Hole hole = new Hole(photoPath, description, location);
+                holes.add(hole);
+            } while (cursor.moveToNext());
+        }
 
-		Log.d("getAllHoles()", holes.toString());
-		return holes;
-	}
+        Log.d("getAllHoles()", holes.toString());
+        return holes;
+    }
+
+    public ArrayList<AccountForm> getAllAccountForms() {
+        ArrayList<AccountForm> forms = new ArrayList<>();
+
+        String query = "SELECT * FROM " + TABLE_ACCOUNTS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                AccountForm form = accountFormBuilder(cursor);
+                forms.add(form);
+            } while (cursor.moveToNext());
+        }
+
+        Log.d("getAllAccountForms()", forms.toString());
+        return forms;
+    }
+
+    public AccountForm getAccountByID(int id) {
+        ArrayList<AccountForm> ar = getAllAccountForms();
+        return ar.get(id);
+/*        String query = "SELECT * FROM " + TABLE_ACCOUNTS + " WHERE " + KEY_ACC_ID + " = " + id;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        AccountForm form = null;
+
+        if (cursor.moveToFirst()) {
+            form = accountFormBuilder(cursor);
+        }
+
+        Log.d("getAccountByID()", form.toString());
+        return form;
+*/    }
 
 	public int updateForm(Form form) {
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -137,9 +203,9 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		ContentValues values = contentValuesBuilder(form);
 
 		int i = db.update(TABLE_DEEP_HOLE_FORMS,
-				values,
-				KEY_ID + " = ?",
-				new String[] { String.valueOf(form.getId()) });
+                values,
+                KEY_ID + " = ?",
+                new String[]{String.valueOf(form.getId())});
 
 		db.close();
 		return i;
@@ -156,28 +222,51 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		Log.d("deleteForm", form.toString());
 	}
 
-	public ContentValues contentValuesBuilder(Form form) {
-		ContentValues values = new ContentValues();
-		values.put(KEY_PHOTO_PATH, form.getPhotoPath());
-		values.put(KEY_DESCRIPTION, form.getDescription());
-		values.put(KEY_RECIPIENT, form.getRecipient());
-		values.put(KEY_LOCALIZATION, form.getLocalization());
-		values.put(KEY_SIGNATURE, form.getSignature());
-		values.put(KEY_TELEPHONE_NUMBER, form.getTelephone());
+    public ContentValues contentValuesBuilder(Form form) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_PHOTO_PATH, form.getPhotoPath());
+        values.put(KEY_DESCRIPTION, form.getDescription());
+        values.put(KEY_RECIPIENT, form.getRecipient());
+        values.put(KEY_LOCALIZATION, form.getLocalization());
+        values.put(KEY_SIGNATURE, form.getSignature());
+        values.put(KEY_TELEPHONE_NUMBER, form.getTelephone());
 
-		return values;
-	}
+        return values;
+    }
 
-	public Form formBuilder(Cursor cursor) {
-		Form form = new Form();
-		form.setId(Integer.parseInt(cursor.getString(0)));
-		form.setPhotoPath(cursor.getString(1));
-		form.setDescription(cursor.getString(2));
-		form.setRecipient(cursor.getString(3));
-		form.setLocalization(cursor.getString(4));
-		form.setSignature(cursor.getString(5));
-		form.setTelephone(cursor.getString(6));
+    public ContentValues contentValuesBuilderForAccounts(AccountForm form) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_NAME, form.getName());
+        values.put(KEY_PASSWORD, form.getPassword());
+        values.put(KEY_EMAIL, form.getEmail());
+        values.put(KEY_PHONE, form.getPhone());
+        values.put(KEY_PESEL, form.getPesel());
 
-		return form;
-	}
+        return values;
+    }
+
+    public Form formBuilder(Cursor cursor) {
+        Form form = new Form();
+        form.setId(Integer.parseInt(cursor.getString(0)));
+        form.setPhotoPath(cursor.getString(1));
+        form.setDescription(cursor.getString(2));
+        form.setRecipient(cursor.getString(3));
+        form.setLocalization(cursor.getString(4));
+        form.setSignature(cursor.getString(5));
+        form.setTelephone(cursor.getString(6));
+
+        return form;
+    }
+
+    public AccountForm accountFormBuilder(Cursor cursor) {
+        AccountForm form = new AccountForm();
+        form.setId(Integer.parseInt(cursor.getString(0)));
+        form.setName(cursor.getString(1));
+        form.setPassword(cursor.getString(2));
+        form.setEmail(cursor.getString(3));
+        form.setPhone(cursor.getString(4));
+        form.setPesel(cursor.getString(5));
+
+        return form;
+    }
 }

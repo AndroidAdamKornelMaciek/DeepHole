@@ -1,58 +1,41 @@
 package project.deephole;
 
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RadioGroup;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.List;
+import java.util.Map;
 
-public class LoginActivity extends ActionBarActivity {
-	static final String NAME_KEY = "name";
-	static final String PASSWORD_KEY = "password";
-	static final String EMAIL_KEY = "email";
-	static final String PHONE_KEY = "phone";
-	static final String PESEL_LOGIN_KEY = "pesel";
-	String name = "";
-	String password = "";
-	String email = "";
-	String phone = "";
-	String pesel = "";
+
+public class LoginActivity extends Activity {
+	SQLiteDeepHoleHelper db;
+	List<AccountForm> forms;
+    static final String KEY_ACCTUAL_ACCOUNT = "accAcc";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		db = new SQLiteDeepHoleHelper(this);
 
-        if (sharedPref.contains(NAME_KEY)) {
-            name = sharedPref.getString(NAME_KEY, null);
-            ((TextView)findViewById(R.id.nameText)).setText(name);
-        }
-        if (sharedPref.contains(PASSWORD_KEY)) {
-            password = sharedPref.getString(PASSWORD_KEY, null);
-            ((TextView)findViewById(R.id.passwordText)).setText(password);
-        }
-        if (sharedPref.contains(EMAIL_KEY)) {
-            email = sharedPref.getString(EMAIL_KEY, null);
-            ((TextView)findViewById(R.id.emailText)).setText(email);
-        }
-        if (sharedPref.contains(PHONE_KEY)) {
-            phone = sharedPref.getString(PHONE_KEY, null);
-            ((TextView)findViewById(R.id.phoneText)).setText(phone);
-        }
-        if (sharedPref.contains(PESEL_LOGIN_KEY)) {
-            pesel = sharedPref.getString(PESEL_LOGIN_KEY, null);
-            ((TextView)findViewById(R.id.peselText)).setText(pesel);
-        }
+		forms = db.getAllAccountForms();
+		Log.d("Login","Mam konta");
+		String res = "";
+		for (AccountForm x : forms) {
+			res += x.getId() + " " + x.getName() + "\n";
+		}
+
+		((TextView)findViewById(R.id.textView)).setText(res);
 	}
 
 	@Override
@@ -77,34 +60,30 @@ public class LoginActivity extends ActionBarActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-		SharedPreferences.Editor editor = sharedPref.edit();
+	public void onLogin(View view) {
+		String login = ((TextView)findViewById(R.id.nameText)).getText().toString();
+		String password = ((TextView)findViewById(R.id.passwordText)).getText().toString();
 
-        name = ((TextView)findViewById(R.id.nameText)).getText().toString();
-        password = ((TextView)findViewById(R.id.passwordText)).getText().toString();
-        email = ((TextView)findViewById(R.id.emailText)).getText().toString();
-        phone = ((TextView)findViewById(R.id.phoneText)).getText().toString();
-        pesel = ((TextView)findViewById(R.id.peselText)).getText().toString();
+		boolean logged = false;
+		for (AccountForm x : forms) {
+			if (x.getName().equals(login)) {
+				if (x.getPassword().equals(password)) {
+                    DeepHoleActivity.id = (int)x.getId() - 1;
+					Toast.makeText(this, "Logged In, ID = " + DeepHoleActivity.id, Toast.LENGTH_LONG).show();
 
-        editor.putString(NAME_KEY, name);
-        editor.putString(PASSWORD_KEY, password);
-        editor.putString(EMAIL_KEY, email);
-        editor.putString(PHONE_KEY, phone);
-        editor.putString(PESEL_LOGIN_KEY, pesel);
-        editor.commit();
-	}
+					finish();
+                    return;
+				} else {
+                    Toast.makeText(this, "Wrong Password", Toast.LENGTH_LONG).show();
+                    ((TextView)findViewById(R.id.passwordText)).setText("");
+                    return;
+				}
+			}
+		}
+        Toast.makeText(this, "Name not found", Toast.LENGTH_LONG).show();
+    }
 
-	public void onSave(View view) {
-		name = ((TextView)findViewById(R.id.nameText)).getText().toString();
-		password = ((TextView)findViewById(R.id.passwordText)).getText().toString();
-		email = ((TextView)findViewById(R.id.emailText)).getText().toString();
-		phone = ((TextView)findViewById(R.id.phoneText)).getText().toString();
-		pesel = ((TextView)findViewById(R.id.peselText)).getText().toString();
-
-
-		Toast.makeText(getApplicationContext(), "Account created and saved.", Toast.LENGTH_LONG).show();
+	public void onLogout(View view) {
+        DeepHoleActivity.id = -1;
 	}
 }

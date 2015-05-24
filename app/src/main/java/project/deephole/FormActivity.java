@@ -25,6 +25,7 @@ import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -33,6 +34,8 @@ import com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
+
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -63,6 +66,11 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
 	 */
 	static final String PATH_KEY = "path";
+
+	/**
+	 * Uzywane do logowania w SharedPreferrences
+	 */
+	static final String KEY_ACCTUAL_ACCOUNT = "accAcc";
 
 	static final String DESC_KEY = "description";
 	static final String RECIPIENT_KEY = "recipient";
@@ -128,7 +136,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		photoPreview.setImageResource(R.drawable.camera_icon);
 
 		descriptEditor = (EditText) findViewById(R.id.description);
-		signEditor = (EditText) findViewById(R.id.sender_signature);
+//		signEditor = (EditText) findViewById(R.id.sender_signature);
 
 		recipientList = (Spinner) findViewById(R.id.recipient_list);
 
@@ -139,11 +147,15 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 		RadioGroup localizationMenu = (RadioGroup) findViewById(R.id.localization_menu);
 		localizationMenu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
-				manual = (checkedId == R.id.manual_radio_button);
-			}
-		});
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                manual = (checkedId == R.id.manual_radio_button);
+            }
+        });
+
+        //TU DODAMY WYCIAGANIE ZALOGOWANEGO ID Z INTENTU
+        AccountForm af = db.getAccountByID(DeepHoleActivity.id);
+        ((TextView)findViewById(R.id.loggedUser)).setText(af.toString());
 
 		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 		if(sharedPref.contains(ADDED_KEY))
@@ -172,9 +184,9 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
 			locMenu.check(pref);
 		}
-		if (sharedPref.contains(PESEL_KEY))
-			signEditor.setText(sharedPref.getString(PESEL_KEY, ""));
-
+		if (sharedPref.contains(PESEL_KEY)) {
+//            signEditor.setText(sharedPref.getString(PESEL_KEY, ""));
+		}
 
 		if (savedInstanceState == null) {
 			return;
@@ -303,7 +315,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		int locPref = locMenu.getCheckedRadioButtonId();
 		editor.putInt(LOC_PREF_KEY, locPref);
 
-		editor.putString(PESEL_KEY, signEditor.getText().toString());
+//		editor.putString(PESEL_KEY, signEditor.getText().toString());
 		editor.putBoolean(ADDED_KEY, pictureAdded);
 		editor.commit();
 	}
@@ -349,10 +361,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		String imageFileName = "JPEG_" + timeStamp + "_";
 		File storageDir = Environment.getExternalStoragePublicDirectory(
 				Environment.DIRECTORY_PICTURES);
-		File image = File.createTempFile(
+        File image = File.createTempFile(
                 imageFileName,
-                ".jpg",
-                storageDir);
+				".jpg",
+				storageDir);
 
 		currentPhotoPath = image.getAbsolutePath();
 		return image;
@@ -376,12 +388,12 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		int photoW = bmOptions.outWidth;
 		int photoH = bmOptions.outHeight;
-		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
 
 		bmOptions.inJustDecodeBounds = false;
 		bmOptions.inSampleSize = scaleFactor;
 
-		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		photoPreview.setImageBitmap(bitmap);
 		pictureAdded = true;
 	}
@@ -404,7 +416,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			return;
 		}
 
-		String pesel = signEditor.getText().toString();
+/*		String pesel = signEditor.getText().toString();
 		if (pesel.length() != 11) {
 			Toast.makeText(getApplicationContext(), "Wrong length of PESEL!",
 					Toast.LENGTH_LONG).show();
@@ -412,17 +424,17 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		} else {
 			int res = 0;
 		//    a+3b+7c+9d+e+3f+7g+9h+i+3j+k
-            int tab[] = {1,3,7,9,1,3,7,9,1,3,1};
+			int tab[] = {1,3,7,9,1,3,7,9,1,3,1};
 			for (int i=0; i < 11; i++) {
-                res += tab[i] * (pesel.charAt(i) - '0');
+				res += tab[i] * (pesel.charAt(i) - '0');
 			}
-            if (res % 10 != 0) {
-                Toast.makeText(getApplicationContext(), "Invalid PESEL!",
-                        Toast.LENGTH_LONG).show();
-                return;
-            }
+			if (res % 10 != 0) {
+				Toast.makeText(getApplicationContext(), "Invalid PESEL!",
+						Toast.LENGTH_LONG).show();
+				return;
+			}
 		}
-
+*/
 		if (manual) {
 			Intent intent = new Intent(this, LocationActivity.class);
 			startActivityForResult(intent, REQUEST_LOCATION);
@@ -454,7 +466,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	public void sendEmail(){
 		String desc = descriptEditor.getText().toString();
 		String recipient = recipientList.getSelectedItem().toString();
-		String signature = signEditor.getText().toString();
+		String signature = ((TextView)findViewById(R.id.loggedUser)).getText().toString();
+		//signEditor.getText().toString();
 		TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
 		String phoneNumber = tMgr.getLine1Number();
 
@@ -502,7 +515,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		Log.d("debug", "resetForm");
 		currentPhotoPath = null;
 		descriptEditor.setText("");
-		signEditor.setText("");
+//		signEditor.setText("");
 
 		photoPreview.setImageResource(R.drawable.camera_icon);
 		Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
