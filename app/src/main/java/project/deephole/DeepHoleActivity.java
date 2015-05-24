@@ -57,8 +57,13 @@ public class DeepHoleActivity extends Activity {
 		startActivity(intent);
 	}
 
-	public void onFormulate(View view) {
-		Intent intent = new Intent(this, FormActivity.class);
-		startActivity(intent);
-	}
+    public void onFormulate(View view) {
+        Intent intent = new Intent(this, FormActivity.class);
+        startActivity(intent);
+    }
+
+    public void onLogin(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+    }
 }
