@@ -79,6 +79,9 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	static final String LOC_PREF_KEY = "localization";
 	static final String PESEL_KEY = "pesel";
 
+    int id; //zalogowany user
+    static final String KEY_LOG_ID = "accLogId";
+
 	private SQLiteDeepHoleHelper db;
 	/**
 	 * Pole przechowujące ścieżkę zdjęcia, które zostało zrobione.
@@ -155,9 +158,9 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             }
         });
 
-        //TU DODAMY WYCIAGANIE ZALOGOWANEGO ID Z INTENTU
-        AccountForm af = db.getAccountByID(DeepHoleActivity.id);
-        ((TextView)findViewById(R.id.loggedUser)).setText(af.toString());
+        id = getIntent().getIntExtra(KEY_LOG_ID, -1);
+        AccountForm af = db.getAccountByID(id);
+        ((TextView)findViewById(R.id.loggedUser)).setText(af.getName().toString());
 
 		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 		if(sharedPref.contains(ADDED_KEY))
@@ -444,25 +447,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			return;
 		}
 
-/*		String pesel = signEditor.getText().toString();
-		if (pesel.length() != 11) {
-			Toast.makeText(getApplicationContext(), "Wrong length of PESEL!",
-					Toast.LENGTH_LONG).show();
-			return;
-		} else {
-			int res = 0;
-		//    a+3b+7c+9d+e+3f+7g+9h+i+3j+k
-			int tab[] = {1,3,7,9,1,3,7,9,1,3,1};
-			for (int i=0; i < 11; i++) {
-				res += tab[i] * (pesel.charAt(i) - '0');
-			}
-			if (res % 10 != 0) {
-				Toast.makeText(getApplicationContext(), "Invalid PESEL!",
-						Toast.LENGTH_LONG).show();
-				return;
-			}
-		}
-*/
 		if (manual) {
 			Intent intent = new Intent(this, LocationActivity.class);
 			startActivityForResult(intent, REQUEST_LOCATION);

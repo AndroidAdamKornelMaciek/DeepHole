@@ -6,17 +6,21 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 //TO JEST GŁÓWNA AKTYWNOŚĆ PANOWIE, OTWIERA SIĘ PO URUCHOMIENIU
 
 public class DeepHoleActivity extends Activity {
-    //kto jest zalogowany, trzeba to przerobic na startactivityforresult, ale nie mam teraz juz sily tego robic
-    public static int id;
+    private int id;
+    static final String KEY_LOG_ID = "accLogId";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.deep_hole_layout);
+
+        Bundle bundle = getIntent().getExtras();
+        id = bundle.getInt(KEY_LOG_ID, -1);
 
 		/*SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
 		ArrayList<Form> forms = db.getAllForms();
@@ -47,6 +51,13 @@ public class DeepHoleActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Intent returnIntent = new Intent();
+        setResult(RESULT_CANCELED, returnIntent);
+    }
+
 	public void onOverview(View view) {
 		Intent intent = new Intent(this, OverviewActivity.class);
 		startActivity(intent);
@@ -54,16 +65,13 @@ public class DeepHoleActivity extends Activity {
 
     public void onFormulate(View view) {
         Intent intent = new Intent(this, FormActivity.class);
+        intent.putExtra(KEY_LOG_ID, id);
         startActivity(intent);
     }
 
-    public void onLogin(View view) {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
-    }
-
-    public void onRegister(View view) {
-        Intent intent = new Intent(this, RegisterAccountActivity.class);
-        startActivity(intent);
+    public void onLogout(View view) {
+        Intent returnIntent = new Intent();
+        setResult(RESULT_FIRST_USER, returnIntent);
+        finish();
     }
 }

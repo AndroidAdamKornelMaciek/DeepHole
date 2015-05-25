@@ -28,21 +28,10 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Login"
-        android:id="@+id/login_button"
+        android:text="Logout"
+        android:id="@+id/logout_button"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/report_button"
         android:textAllCaps="false"
-        android:onClick="onLogin"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="New Account"
-        android:id="@+id/register_button"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/login_button"
-        android:textAllCaps="false"
-        android:onClick="onRegister"/>
-
+        android:onClick="onLogout" />
 </RelativeLayout>

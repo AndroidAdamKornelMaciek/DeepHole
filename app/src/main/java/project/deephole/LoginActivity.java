@@ -2,6 +2,7 @@ package project.deephole;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -19,7 +20,11 @@ import java.util.Map;
 public class LoginActivity extends Activity {
 	SQLiteDeepHoleHelper db;
 	List<AccountForm> forms;
-    static final String KEY_ACCTUAL_ACCOUNT = "accAcc";
+    static final int EXIT_CODE = -1;
+    static final int REGISTER_CODE = 1;
+    static final String KEY_LOG_ID = "accLogId";
+    static final String KEY_LOG_BOOL = "accLogBool";
+    static final String NAME_KEY = "name";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -27,18 +32,16 @@ public class LoginActivity extends Activity {
 		setContentView(R.layout.activity_login);
 
 		db = new SQLiteDeepHoleHelper(this);
+        populateAccountsList();
 
-		forms = db.getAllAccountForms();
-		Log.d("Login","Mam konta");
-		String res = "";
-		for (AccountForm x : forms) {
-			res += x.getId() + " " + x.getName() + "\n";
-		}
+        SharedPreferences sp = getPreferences(Context.MODE_PRIVATE);
+        if (sp.getBoolean(KEY_LOG_BOOL, false)) {
+            int id = sp.getInt(KEY_LOG_ID, -1);
+            login(id);
+        }
+    }
 
-		((TextView)findViewById(R.id.textView)).setText(res);
-	}
-
-	@Override
+    @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.menu_login, menu);
@@ -60,18 +63,45 @@ public class LoginActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == EXIT_CODE) {
+            if (resultCode == RESULT_CANCELED) {
+                finish();
+            } else if (resultCode == RESULT_FIRST_USER) {
+                SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPref.edit();
+
+                editor.clear();
+                editor.apply();
+            }
+        } else if (requestCode == REGISTER_CODE && resultCode == RESULT_OK) {
+            String name = data.getStringExtra(NAME_KEY);
+            ((TextView)findViewById(R.id.nameText)).setText(name);
+            populateAccountsList();
+        }
+    }
+
+    public void populateAccountsList() {
+        forms = db.getAllAccountForms();
+        Log.d("Login","Mam konta");
+        String res = "";
+        for (AccountForm x : forms) {
+            res += x.getId() + " " + x.getName() + "\n";
+        }
+
+        ((TextView)findViewById(R.id.textView)).setText(res);
+    }
+
 	public void onLogin(View view) {
 		String login = ((TextView)findViewById(R.id.nameText)).getText().toString();
 		String password = ((TextView)findViewById(R.id.passwordText)).getText().toString();
+        populateAccountsList();
 
-		boolean logged = false;
 		for (AccountForm x : forms) {
 			if (x.getName().equals(login)) {
 				if (x.getPassword().equals(password)) {
-                    DeepHoleActivity.id = (int)x.getId() - 1;
-					Toast.makeText(this, "Logged In, ID = " + DeepHoleActivity.id, Toast.LENGTH_LONG).show();
-
-					finish();
+                    login((int)(x.getId()-1));
                     return;
 				} else {
                     Toast.makeText(this, "Wrong Password", Toast.LENGTH_LONG).show();
@@ -83,7 +113,24 @@ public class LoginActivity extends Activity {
         Toast.makeText(this, "Name not found", Toast.LENGTH_LONG).show();
     }
 
-	public void onLogout(View view) {
-        DeepHoleActivity.id = -1;
+	public void onRegister(View view) {
+        Intent intent = new Intent(this, RegisterAccountActivity.class);
+        startActivityForResult(intent, REGISTER_CODE);
 	}
+
+    private void login(int id) {
+        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putBoolean(KEY_LOG_BOOL, true);
+        editor.putInt(KEY_LOG_ID, id);
+        editor.apply();
+
+        Toast.makeText(this, "Logged In, ID = " + id, Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(this, DeepHoleActivity.class);
+        intent.putExtra(KEY_LOG_ID, id);
+        startActivityForResult(intent, EXIT_CODE);
+
+        finish();
+    }
 }
