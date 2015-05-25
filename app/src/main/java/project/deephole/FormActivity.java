@@ -158,9 +158,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             }
         });
 
-        id = getIntent().getIntExtra(KEY_LOG_ID, -1);
+        SharedPreferences sp = getSharedPreferences("shpr", Context.MODE_PRIVATE);
+        id = sp.getInt(KEY_LOG_ID, -1);
         AccountForm af = db.getAccountByID(id);
-        ((TextView)findViewById(R.id.loggedUser)).setText(af.getName().toString());
+        ((TextView)findViewById(R.id.loggedUser)).setText("Currently logged as " + af.getName().toString());
 
 		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 		if(sharedPref.contains(ADDED_KEY))

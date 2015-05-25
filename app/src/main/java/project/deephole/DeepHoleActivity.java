@@ -1,8 +1,11 @@
 package project.deephole;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -19,8 +22,8 @@ public class DeepHoleActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.deep_hole_layout);
 
-        Bundle bundle = getIntent().getExtras();
-        id = bundle.getInt(KEY_LOG_ID, -1);
+        SharedPreferences sharedPref = getSharedPreferences("shpr",Context.MODE_PRIVATE);
+        id = sharedPref.getInt(KEY_LOG_ID, -1);
 
 		/*SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
 		ArrayList<Form> forms = db.getAllForms();
@@ -65,13 +68,18 @@ public class DeepHoleActivity extends Activity {
 
     public void onFormulate(View view) {
         Intent intent = new Intent(this, FormActivity.class);
-        intent.putExtra(KEY_LOG_ID, id);
         startActivity(intent);
     }
 
     public void onLogout(View view) {
+        SharedPreferences sharedPref = getSharedPreferences("shpr", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt(KEY_LOG_ID, -1);
+        editor.apply();
+
         Intent returnIntent = new Intent();
-        setResult(RESULT_FIRST_USER, returnIntent);
+        setResult(RESULT_OK, returnIntent);
         finish();
     }
 }
