@@ -8,26 +8,22 @@
         android:layout_height="fill_parent"
         android:orientation="vertical"
         android:layout_weight="5"
-        android:weightSum="3">
+        android:weightSum="5">
         <ImageView
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/hole_photo"
-            android:layout_centerHorizontal="true"
-            android:layout_alignParentTop="true"
             android:layout_marginTop="5dp"
             android:onClick="takePhoto"
             android:layout_weight="1"/>
         <Button
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="Submit Form"
+            android:text="@string/sendForm"
             android:id="@+id/confirm_button"
             android:textAllCaps="false"
             android:onClick="validateMailData"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_weight="2"/>
+             android:layout_weight="4"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
@@ -42,30 +38,24 @@
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/description"
-            android:layout_below="@+id/hole_photo"
-            android:layout_centerHorizontal="true"
             android:maxLines="2"
             android:lines="2"
             android:layout_marginBottom="10dp"
-            android:hint="Pothole description."
+            android:hint="@string/descriptionHint"
+            android:background="#00000000"
             android:layout_weight="2"/>
 
         <Spinner
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:id="@+id/recipient_list"
-            android:layout_above="@+id/localization_menu"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="10dp"
+           android:layout_marginBottom="10dp"
             android:layout_weight="2"/>
 
         <RadioGroup
             android:id="@+id/localization_menu"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:layout_above="@+id/sender_signature"
             android:layout_marginBottom="10dp"
             android:layout_weight="2"
             android:weightSum="2">
@@ -73,18 +63,16 @@
             <RadioButton
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="Automatically fetch current localization."
+                android:text="@string/chooseAuto"
                 android:id="@+id/auto_radio_button"
-                android:layout_gravity="left"
                 android:checked="true"
                 android:layout_weight="1"/>
 
             <RadioButton
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="Manually choose your localization."
+                android:text="@string/chooseManually"
                 android:id="@+id/manual_radio_button"
-                android:layout_gravity="left"
                 android:layout_weight="1"/>
         </RadioGroup>
 
@@ -93,8 +81,6 @@
             android:layout_height="fill_parent"
             android:ems="15"
             android:id="@+id/loggedUser"
-            android:layout_above="@+id/confirm_button"
-            android:layout_centerHorizontal="true"
             android:gravity="center"
             android:layout_marginBottom="10dp"
             android:text="Who Is Logged?"

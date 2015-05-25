@@ -18,5 +18,9 @@
     <string name="title_activity_full_screen_hole">FullScreenHoleActivity</string>
     <string name="title_activity_hole_radar">HoleRadarActivity</string>
     <string name="title_activity_login">LoginActivity</string>
+    <string name="chooseManually">Manualnie</string>
+    <string name="chooseAuto">Auto-lokalizacja</string>
+    <string name="descriptionHint">Opis ubytku</string>
+    <string name="sendForm">Wyślij</string>
 
 </resources>
