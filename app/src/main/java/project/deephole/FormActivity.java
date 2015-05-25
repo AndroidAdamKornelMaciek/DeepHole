@@ -362,7 +362,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String imageFileName = "JPEG_" + timeStamp + "_";
 		File storageDir = Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_PICTURES);
+				Environment.DIRECTORY_PICTURES + File.separator + "deepHole");
+		if (storageDir.exists() == false) {
+			storageDir.mkdir();
+		}
         File image = File.createTempFile(
                 imageFileName,
 				".jpg",
