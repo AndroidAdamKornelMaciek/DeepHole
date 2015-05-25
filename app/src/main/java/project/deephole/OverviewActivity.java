@@ -37,8 +37,7 @@ public class OverviewActivity extends ListActivity {
 									int position, long id) {
 				Hole hole = holes.get(position);
 				Intent fullScreen = new Intent(getApplicationContext(), FullScreenHoleActivity.class);
-				//potem do usunięcia
-				fullScreen.putExtra("klucz", position);
+
 				fullScreen.putExtra(PATH_KEY, hole.getPhotoPath());
 				fullScreen.putExtra(DESC_KEY, hole.getDesc());
 				fullScreen.putExtra(LOCAL_KEY, hole.getLocation());

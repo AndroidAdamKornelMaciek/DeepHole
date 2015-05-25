@@ -1,18 +1,20 @@
 package project.deephole;
 
+import android.app.Activity;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.view.ViewTreeObserver;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
-
-
-public class FullScreenHoleActivity extends ActionBarActivity {
+public class FullScreenHoleActivity extends Activity {
 
 	private String location;
 
@@ -21,16 +23,53 @@ public class FullScreenHoleActivity extends ActionBarActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.full_screen_hole);
 
-		TextView txt = (TextView) findViewById(R.id.test);
-		Bundle extras = getIntent().getExtras();
-		location = extras.getString(OverviewActivity.LOCAL_KEY);
-		int pos = extras.getInt("klucz");
-		txt.setText(pos + "");
+		final ImageView photoView = (ImageView) findViewById(R.id.photo_view);
+		TextView descView = (TextView) findViewById(R.id.desc_view);
+		TextView locView = (TextView) findViewById(R.id.loc_view);
+		ImageButton mapBtn = (ImageButton) findViewById(R.id.map_btn);
 
-		Button mapBtn = (Button) findViewById(R.id.map_btn);
+		Bundle extras = getIntent().getExtras();
+		final String photoPath = extras.getString(OverviewActivity.PATH_KEY);
+		String desc = extras.getString(OverviewActivity.DESC_KEY);
+		String readableLoc = extras.getString(OverviewActivity.READ_LOCAL_KEY);
+		location = extras.getString(OverviewActivity.LOCAL_KEY);
+
+		photoView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+			@Override
+			public void onGlobalLayout() {
+				photoView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				setPic(photoPath, photoView);
+			}
+		});
+
+		//zamiania stringów do strings.xml
+		descView.setText("Description: " + desc);
+		descView.setMovementMethod(new ScrollingMovementMethod());
+		locView.setText("Localization: " + readableLoc);
 		mapBtn.setBackgroundResource(R.drawable.map_icon);
 	}
 
+	private void setPic(String path, ImageView view) {
+		if(path == null) {
+			return;
+		}
+
+		int targetW = view.getWidth();
+		int targetH = view.getHeight();
+
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(path, bmOptions);
+		int photoW = bmOptions.outWidth;
+		int photoH = bmOptions.outHeight;
+		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = scaleFactor;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(path, bmOptions);
+		view.setImageBitmap(bitmap);
+	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
