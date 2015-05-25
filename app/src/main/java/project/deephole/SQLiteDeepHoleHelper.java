@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
@@ -137,7 +138,28 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		Log.d("getAllForms()", forms.toString());
 		return forms;
 	}
+    public ArrayList<Hole> getAllMiniHoles(){
+        ArrayList<Hole> holes = new ArrayList<>();
 
+        String query = "SELECT " + KEY_PHOTO_PATH + ", " + KEY_DESCRIPTION
+                +", " + KEY_LOCALIZATION + " FROM " + TABLE_DEEP_HOLE_FORMS;
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                String photoPath = cursor.getString(0);
+                String description = cursor.getString(1);
+                String location = cursor.getString(2);
+                Hole hole = new Hole(photoPath.substring(0,photoPath.length()-4)+"mini.jpg", description, location);
+                holes.add(hole);
+            } while (cursor.moveToNext());
+        }
+
+        Log.d("getAllHoles()", holes.toString());
+        return holes;
+    }
     public ArrayList<Hole> getAllHoles() {
         ArrayList<Hole> holes = new ArrayList<>();
 

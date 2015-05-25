@@ -26,7 +26,7 @@ public class OverviewActivity extends ListActivity {
 		SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
 
 		ListView listView = getListView();
-		final ArrayList<Hole> holes = db.getAllHoles();
+		final ArrayList<Hole> holes = db.getAllMiniHoles();
 		OverviewArrayAdapter adapter = new OverviewArrayAdapter(this, holes);
 		listView.setAdapter(adapter);
 
