@@ -8,16 +8,37 @@
 		android:id="@+id/photo_view"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
+		android:layout_marginBottom="20dp"
 		android:layout_weight="1"/>
 
-	<TextView
-		android:id="@+id/desc_view"
+	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
 		android:layout_weight="2"
-		android:maxLines="3"
-		android:scrollbars="vertical"
-		android:textAppearance="?android:attr/textAppearanceMedium"/>
+		android:orientation="vertical"
+		android:weightSum="10">
+
+		<TextView
+			android:id="@+id/desc_prompt"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:text="@string/descriptionPrompt"
+			android:layout_marginLeft="15dp"
+			android:layout_weight="7"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+		<TextView
+			android:id="@+id/desc_view"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_marginTop="10dp"
+			android:layout_marginLeft="15dp"
+			android:layout_marginRight="15dp"
+			android:layout_weight="1"
+			android:maxLines="2"
+			android:scrollbars="vertical"
+			android:textAppearance="?android:attr/textAppearanceMedium"/>
+	</LinearLayout>
 
 	<RelativeLayout
 		android:layout_width="fill_parent"
@@ -28,6 +49,9 @@
 			android:id="@+id/loc_view"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="15dp"
+			android:layout_marginTop="20dp"
 			android:layout_toLeftOf="@+id/map_btn"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -37,6 +61,8 @@
 			android:layout_height="70dp"
 			android:layout_alignParentBottom="true"
 			android:layout_alignParentRight="true"
+			android:layout_marginBottom="15dp"
+			android:layout_marginRight="15dp"
 			android:onClick="navigateToMap"/>
 	</RelativeLayout>
 

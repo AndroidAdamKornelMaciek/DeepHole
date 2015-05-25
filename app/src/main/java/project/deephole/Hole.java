@@ -32,12 +32,12 @@ public class Hole {
 
 	public String parser(String location) {
 		Log.d("parser", location);
-		final int offset = 4, scope = 10;
+		final int offset = 4, scope = 10, start = 8;
 		int counter = 0;
 		char direction;
 
 		StringBuilder readable = new StringBuilder();
-		readable.append(location.substring(0, scope));
+		readable.append(location.substring(start, scope));
 		if(location.charAt(scope) == '-') {
 			counter++;
 			direction = 'S';

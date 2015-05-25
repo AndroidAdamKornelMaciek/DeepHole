@@ -42,10 +42,9 @@ public class FullScreenHoleActivity extends Activity {
 			}
 		});
 
-		//zamiania stringów do strings.xml
-		descView.setText("Description: " + desc);
+		descView.setText(desc);
 		descView.setMovementMethod(new ScrollingMovementMethod());
-		locView.setText("Localization: " + readableLoc);
+		locView.setText(getResources().getString(R.string.localizationPrompt) + "\n" + readableLoc);
 		mapBtn.setBackgroundResource(R.drawable.map_icon);
 	}
 
