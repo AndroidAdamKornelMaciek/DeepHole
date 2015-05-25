@@ -60,10 +60,6 @@
             android:value="AIzaSyB0KMLdRkJLn3Ngm2VJl0vKryIQCBku3FM" />
 
         <activity
-            android:name=".DraftActivity"
-            android:label="@string/title_activity_draft" >
-        </activity>
-        <activity
             android:name=".OverviewActivity"
             android:label="@string/title_activity_overview" >
         </activity>

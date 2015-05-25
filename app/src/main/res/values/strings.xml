@@ -22,7 +22,9 @@
     <string name="chooseAuto">Auto-lokalizacja</string>
     <string name="descriptionHint">Opis ubytku</string>
 	<string name="descriptionPrompt">Opis ubytku:</string>
+	<string name="descShortPrompt">Opis:</string>
 	<string name="localizationPrompt">Lokalizacja:</string>
+	<string name="deepHoleWarning">Uwaga! Głęboka dziura...</string>
     <string name="sendForm">Wyślij</string>
 
 </resources>

@@ -1,7 +1,5 @@
 package project.deephole;
 
-//AKTYWNOŚĆ FORMULARZA, TUTAJ MOŻLIWOŚĆ DODANIA OPISU, ZDJĘCIA, WYBÓR ADRESATA I OKREŚLENIE GEOLOKALIZACJI
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -35,12 +33,9 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
-import org.w3c.dom.Text;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -161,7 +156,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         SharedPreferences sp = getSharedPreferences("shpr", Context.MODE_PRIVATE);
         id = sp.getInt(KEY_LOG_ID, -1);
         AccountForm af = db.getAccountByID(id);
-        ((TextView)findViewById(R.id.loggedUser)).setText("Currently logged as " + af.getName().toString());
+        ((TextView)findViewById(R.id.loggedUser)).setText("Currently logged as " + af.getName());
 
 		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
 		if(sharedPref.contains(ADDED_KEY))
@@ -222,15 +217,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
 			setPic();
-//PÓKI CO NIE KASOWAĆ
-			/*File photo = new File(currentPhotoPath);
-			Bitmap bmap = BitmapFactory.decodeFile(photo.getAbsolutePath());
-			photoPreview.setImageBitmap(bmap);*/
-			//photoPreview.setImageURI(Uri.fromFile(photo));
-
-			/*Bundle extras = data.getExtras();
-			Bitmap imageBitmap = (Bitmap) extras.get("data");
-			photoPreview.setImageBitmap(imageBitmap);*/
 		} else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
 			Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
 			location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
@@ -452,14 +438,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			Intent intent = new Intent(this, LocationActivity.class);
 			startActivityForResult(intent, REQUEST_LOCATION);
 		} else {
-			if (mGoogleApiClient == null) {
-				mGoogleApiClient = new GoogleApiClient.Builder(this)
-						.addConnectionCallbacks(this)
-						.addOnConnectionFailedListener(this)
-						.addApi(LocationServices.API).build();
-			}
-			mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
 			if (mLastKnownLocation != null) {
 				//nie można pobrać lokalizacji nawet przy włączonym GPS
 				Log.d("Lokalizacja", mLastKnownLocation.toString());
@@ -501,7 +479,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 		db.insertForm(form);
 
-		//wysyłanie maila
 		Intent emailIntent = new Intent(Intent.ACTION_SEND);
 		emailIntent.setType("text/plain");
 		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
@@ -550,7 +527,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 	@Override
 	public void onConnected(Bundle bundle) {
-
+		mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 	}
 
 	@Override

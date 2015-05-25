@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item name="Wroclaw_lat" format="float" type="dimen">51.110</item>
+	<item name="Wroclaw_lng" format="float" type="dimen">17.030</item>
+</resources>

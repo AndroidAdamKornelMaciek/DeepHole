@@ -1,15 +1,15 @@
 package project.deephole;
 
-//TUTAJ MAMY FRAGMENTY Z MAPAMI, UŻYTKOWNIK WYBIERA SWOJĄ POZYCJĘ Z MAPKI
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.model.LatLng;
@@ -17,7 +17,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationActivity extends Activity {
-    static final int REQUEST_LOCATION = 2;
 	static final String LOCATION_KEY = "location";
 	static final String COORDINATES_KEY = "coordinates";
 
@@ -42,12 +41,22 @@ public class LocationActivity extends Activity {
 
 				marker = map.addMarker(new MarkerOptions()
 								.position(latLng)
-								.title("Here is a deep hole...")
+								.title(getResources().getString(R.string.deepHoleWarning))
 								.draggable(true)
 				);
 				picked = true;
 			}
 		});
+
+		TypedValue outValue = new TypedValue();
+		getResources().getValue(R.dimen.Wroclaw_lat, outValue, true);
+		float lat = outValue.getFloat();
+		getResources().getValue(R.dimen.Wroclaw_lng, outValue, true);
+		float lng = outValue.getFloat();
+
+		LatLng coordinates = new LatLng(lat, lng);
+		map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 17));
+		map.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
 	}
 
 	public void confirmLocation(View view) {
@@ -66,14 +75,6 @@ public class LocationActivity extends Activity {
 		} else {
 			getParent().setResult(Activity.RESULT_OK, data);
 		}
-		finish();
-	}
-
-	private void sendLocation(double lng, double lat) {
-		Intent returnIntent = new Intent();
-        returnIntent.putExtra("lng", lng);
-        returnIntent.putExtra("lat", lat);
-		setResult(RESULT_OK, returnIntent);
 		finish();
 	}
 }
