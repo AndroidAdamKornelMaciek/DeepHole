@@ -477,6 +477,16 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	 * Metoda wysyłająca startująca chosera ACTION_SEND oraz pakująca zgłoszenie do bazy danych.
 	 */
 	public void sendEmail(){
+        // w af masz geterami wszystkie dane zalogowanego usera
+        AccountForm af = db.getAccountByID(id);
+        /*af.getId();
+        af.getName();
+        af.getPassword();
+        af.getEmail();
+        af.getPhone();
+        af.getPesel();*/
+
+
 		String desc = descriptEditor.getText().toString();
 		String recipient = recipientList.getSelectedItem().toString();
 		String signature = ((TextView)findViewById(R.id.loggedUser)).getText().toString();
