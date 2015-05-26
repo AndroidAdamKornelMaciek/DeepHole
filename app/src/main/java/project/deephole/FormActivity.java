@@ -431,7 +431,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 					Toast.LENGTH_LONG).show();
 			return;
 		}
-		if (recipient.equals("Recipient")) {
+		if (recipient.equals("Odbiorca")) {
 			Toast.makeText(getApplicationContext(), "Please choose a recipient!",
 					Toast.LENGTH_LONG).show();
 			return;

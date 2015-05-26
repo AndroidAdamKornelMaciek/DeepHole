@@ -1,5 +1,6 @@
 package project.deephole;
 
+import android.app.Activity;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -13,7 +14,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
-public class HoleRadarActivity extends ActionBarActivity {
+public class HoleRadarActivity extends Activity {
 
 	private GoogleMap map;
 
