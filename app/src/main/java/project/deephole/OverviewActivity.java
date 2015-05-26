@@ -3,6 +3,7 @@ package project.deephole;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -23,13 +24,13 @@ public class OverviewActivity extends ListActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.overview_layout);
+		Log.d("DEBUG", "overview oncreate");
 		SQLiteDeepHoleHelper db = new SQLiteDeepHoleHelper(this);
 
 		ListView listView = getListView();
 		final ArrayList<Hole> holes = db.getAllMiniHoles();
 		OverviewArrayAdapter adapter = new OverviewArrayAdapter(this, holes);
 		listView.setAdapter(adapter);
-
 		listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
 			@Override

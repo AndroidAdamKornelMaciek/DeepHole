@@ -381,17 +381,20 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		bmOptions.inJustDecodeBounds = true;
 		BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-		int photoW = bmOptions.outWidth;
+
+		int inScaleFactor = calculateInSampleSize(bmOptions, targetW, targetH);
+		/*int photoW = bmOptions.outWidth;
 		int photoH = bmOptions.outHeight;
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);*/
 
 		bmOptions.inJustDecodeBounds = false;
-		bmOptions.inSampleSize = scaleFactor;
+		bmOptions.inSampleSize = inScaleFactor;
 
         Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 		photoPreview.setImageBitmap(bitmap);
 		pictureAdded = true;
-
+		bmOptions.inSampleSize = inScaleFactor*8;
+		bitmap = BitmapFactory.decodeFile(currentPhotoPath,bmOptions);
 		//BLOK KODU ODPOWIEDZIALNY ZA ZAPISANIE MINIATURY OBOK ZDJĘCIA!!! NIE RUSZAĆ xD UŻYWANE W OVERVIEW ACTIVITY!
 		File filename = new File(currentPhotoPath.substring(0,currentPhotoPath.length()-4)+"mini.jpg");
 		FileOutputStream out = null;
@@ -550,5 +553,27 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		} else {
 			outState.putBoolean(ADDED_KEY, false);
 		}
+	}
+	public static int calculateInSampleSize(
+			BitmapFactory.Options options, int reqWidth, int reqHeight) {
+		// Raw height and width of image
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
+
+		if (height > reqHeight || width > reqWidth) {
+
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+
+			// Calculate the largest inSampleSize value that is a power of 2 and keeps both
+			// height and width larger than the requested height and width.
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+
+		return inSampleSize;
 	}
 }
