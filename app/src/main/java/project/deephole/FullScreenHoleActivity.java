@@ -29,7 +29,8 @@ public class FullScreenHoleActivity extends Activity {
 		ImageButton mapBtn = (ImageButton) findViewById(R.id.map_btn);
 
 		Bundle extras = getIntent().getExtras();
-		final String photoPath = extras.getString(OverviewActivity.PATH_KEY);
+		String photoPathTemp = extras.getString(OverviewActivity.PATH_KEY);
+		final String photoPath = photoPathTemp.substring(0,photoPathTemp.length()-4) + ".jpg";
 		String desc = extras.getString(OverviewActivity.DESC_KEY);
 		String readableLoc = extras.getString(OverviewActivity.READ_LOCAL_KEY);
 		location = extras.getString(OverviewActivity.LOCAL_KEY);
