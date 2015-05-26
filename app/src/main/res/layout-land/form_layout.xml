@@ -17,15 +17,31 @@
             android:layout_marginTop="5dp"
             android:onClick="takePhoto"
             android:layout_weight="1"/>
-        <Button
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:text="@string/sendForm"
-            android:id="@+id/confirm_button"
-            android:textAllCaps="false"
-            android:background="#00000000"
-            android:onClick="validateMailData"
-            android:layout_weight="4"/>
+            android:layout_weight="4"
+            android:weightSum="2">
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/sendForm"
+                android:layout_weight="1"
+                android:id="@+id/confirm_button"
+                android:textAllCaps="false"
+                android:background="#00000000"
+                android:onClick="validateMailData" />
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:text="@string/reset"
+                android:id="@+id/resetButton"
+                android:textAllCaps="false"
+                android:background="#00000000"
+                android:onClick="resetForm"/>
+        </LinearLayout>
+
     </LinearLayout>
     <LinearLayout
         android:layout_width="fill_parent"
