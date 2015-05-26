@@ -2,6 +2,7 @@
 			  android:layout_width="fill_parent"
 			  android:layout_height="fill_parent"
 			  android:orientation="vertical"
+	     	  android:background="@drawable/overviewactivitybackground"
 			  android:weightSum="5">
 
 	<ImageView
@@ -64,6 +65,7 @@
 			android:layout_marginBottom="15dp"
 			android:layout_marginRight="15dp"
 			android:onClick="navigateToMap"/>
+
 	</RelativeLayout>
 
 </LinearLayout>
