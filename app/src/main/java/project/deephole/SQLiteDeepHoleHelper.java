@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter;
 
 import java.util.ArrayList;
 
-//KLASA ODPOWIADA ZA KOMUNIKACJĘ Z BAZĄ DANYCH
 public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 
 	private static final int DATABASE_VERSION = 1;

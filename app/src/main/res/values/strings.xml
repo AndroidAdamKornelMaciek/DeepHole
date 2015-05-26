@@ -11,6 +11,7 @@
     </string-array>
 
     <color name="myRed">#C00000</color>
+	<color name="myBlack">#000F0F</color>
 
     <string name="title_activity_draft">DraftActivity</string>
     <string name="hello_world">Hello world!</string>
