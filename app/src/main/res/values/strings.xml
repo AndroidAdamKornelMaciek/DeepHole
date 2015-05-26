@@ -10,6 +10,8 @@
         <item>anotherrecipient@foo.com</item>
     </string-array>
 
+    <color name="myRed">#C00000</color>
+
     <string name="title_activity_draft">DraftActivity</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_overview">OverviewActivity</string>
@@ -26,5 +28,12 @@
 	<string name="localizationPrompt">Lokalizacja:</string>
 	<string name="deepHoleWarning">Uwaga! Głęboka dziura...</string>
     <string name="sendForm">Wyślij</string>
+    <string name="newHole">Zgłoś dziurę</string>
+    <string name="signup">Zarejestruj</string>
+    <string name="login">Zaloguj się</string>
+    <string name="browse">Lista dziur</string>
+    <string name="name">Nazwa użytkownika</string>
+    <string name="password">Hasło</string>
+    <string name="mail">Adres e-mail</string>
 
 </resources>

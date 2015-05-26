@@ -107,7 +107,7 @@ public class LoginActivity extends Activity {
 			res += x.getId() + " " + x.getName() + "\n";
 		}
 
-		((TextView)findViewById(R.id.textView)).setText(res);
+		((TextView)findViewById(R.id.textView)).setText("");
 	}
 
 	public void onLogin(View view) {
