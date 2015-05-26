@@ -427,12 +427,12 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		String recipient = recipientList.getSelectedItem().toString();
 
 		if (currentPhotoPath == null) {
-			Toast.makeText(getApplicationContext(), "Please take a picture!",
+			Toast.makeText(getApplicationContext(), "Zrób zdjęcie",
 					Toast.LENGTH_LONG).show();
 			return;
 		}
 		if (recipient.equals("Odbiorca")) {
-			Toast.makeText(getApplicationContext(), "Please choose a recipient!",
+			Toast.makeText(getApplicationContext(), "Wybierz odbiorcę",
 					Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -447,7 +447,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			} else {
 				Intent intent = new Intent(this, LocationActivity.class);
 				startActivityForResult(intent, REQUEST_LOCATION);
-				Toast.makeText(getApplicationContext(), "Can't fetch your last location.",
+				Toast.makeText(getApplicationContext(), "Nie można ustalić ostatniej lokalizacji",
 						Toast.LENGTH_LONG).show();
 			}
 
@@ -504,10 +504,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
 		try {
 			startActivity(Intent.createChooser(emailIntent, "sending mail"));
-			Toast.makeText(getApplicationContext(), "Form was sent successfully.",
+			Toast.makeText(getApplicationContext(), "Zgłoszenie zostało przesłane do klienta poczty.",
 					Toast.LENGTH_LONG).show();
 		} catch (android.content.ActivityNotFoundException ex) {
-			Toast.makeText(getApplicationContext(), "There is no mail client installed.",
+			Toast.makeText(getApplicationContext(), "Brak klienta poczty w urządzeniu.",
 					Toast.LENGTH_LONG).show();
 		}
 		resetForm();
