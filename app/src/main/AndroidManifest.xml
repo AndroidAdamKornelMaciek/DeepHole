@@ -34,6 +34,7 @@
         <activity
             android:name=".LoginActivity"
             android:label="@string/app_name"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize|stateHidden" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -42,6 +43,7 @@
         </activity>
         <activity
             android:name=".DeepHoleActivity"
+            android:screenOrientation="portrait"
             android:label="@string/app_name" >
         </activity>
         <activity
@@ -61,6 +63,7 @@
 
         <activity
             android:name=".OverviewActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_overview" >
         </activity>
         <activity
@@ -69,10 +72,12 @@
         </activity>
         <activity
             android:name=".HoleRadarActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_hole_radar" >
         </activity>
         <activity
             android:name=".RegisterAccountActivity"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_login" >
         </activity>
     </application>
