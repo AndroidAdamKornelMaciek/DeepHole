@@ -61,6 +61,7 @@ public class Hole {
 		readable.append(", " + location.substring(coma + counter, coma + counter + offset)
 				+ " " + direction + ")");
 
+		Log.d("READEABLE_LOC", readable.toString());
 		return readable.toString();
 	}
 }

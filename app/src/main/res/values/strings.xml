@@ -24,6 +24,7 @@
     <string name="chooseAuto">Auto-lokalizacja</string>
     <string name="descriptionHint">Opis ubytku</string>
 	<string name="descriptionPrompt">Opis ubytku:</string>
+	<string name="nonDescription">Brak opisu.</string>
 	<string name="descShortPrompt">Opis:</string>
 	<string name="localizationPrompt">Lokalizacja:</string>
 	<string name="deepHoleWarning">Uwaga! Głęboka dziura...</string>

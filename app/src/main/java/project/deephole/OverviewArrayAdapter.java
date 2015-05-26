@@ -17,6 +17,7 @@ public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 
 	private Context context;
 	private ArrayList<Hole> values;
+	private final String nonDesc = "Brak opisu.";
 
 	public OverviewArrayAdapter(Context context, ArrayList<Hole> values) {
 		super(context, R.layout.overview_line_layout, R.id.location, values);
@@ -38,10 +39,15 @@ public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 		if(hole.getPhotoPath() == null)
 			Log.d("getView", "null photo path");
 		new FetchPhotoTask(photoView, hole.getPhotoPath()).execute();
+		String end = "";
 		String formatted = hole.getDesc().replace("\n", " ");
-		if(formatted.length() > 20)
+		if(formatted.length() > 20) {
 			formatted = formatted.substring(0, 20);
-		dscView.setText(dscView.getText().toString() + " " + formatted + "...");
+			end = "...";
+		}
+		if(formatted == null)
+			formatted = nonDesc;
+		dscView.setText(dscView.getText().toString() + " " + formatted + end);
 		locView.setText(locView.getText().toString() + " " + hole.getReadableLocation());
 
 		return rowView;

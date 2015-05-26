@@ -45,7 +45,7 @@ public class FullScreenHoleActivity extends Activity {
 
 		descView.setText(desc);
 		descView.setMovementMethod(new ScrollingMovementMethod());
-		locView.setText(getResources().getString(R.string.localizationPrompt) + "\n" + readableLoc);
+		locView.setText(readableLoc);
 		mapBtn.setBackgroundResource(R.drawable.map_icon);
 	}
 
