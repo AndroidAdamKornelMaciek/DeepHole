@@ -37,7 +37,8 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_below="@+id/location"
-			android:layout_centerHorizontal="true"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="15dp"
 			android:textSize="16sp"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
 
@@ -57,11 +58,11 @@
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:layout_below="@+id/description"
-			android:layout_centerHorizontal="true"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="15dp"
 			android:maxLines="5"
 			android:scrollbars="vertical"
 			android:layout_toLeftOf="@+id/map_btn"
-			android:layout_marginLeft="10dp"
 			android:layout_marginRight="10dp"
 			android:textSize="16sp"
 			android:textAppearance="?android:attr/textAppearanceMedium"/>
