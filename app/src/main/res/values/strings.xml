@@ -35,5 +35,6 @@
     <string name="name">Nazwa użytkownika</string>
     <string name="password">Hasło</string>
     <string name="mail">Adres e-mail</string>
+    <string name="logout">Wyloguj</string>
 
 </resources>
