@@ -19,7 +19,7 @@ Zastosowane wzorce projektowe:
 - Adapter,
 - FactoryMethod,
 
-'''java
+'''C#
 float grade = this.getRated();
 System.out.println(grade);
 5.5
