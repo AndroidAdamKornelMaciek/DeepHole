@@ -22,5 +22,5 @@ Zastosowane wzorce projektowe:
 ```java
 float grade = this.getRated();
 System.out.println(grade);
-5.5;
+>>5.5;
 ```
