@@ -45,7 +45,7 @@
 	<string name="wrongName">Błędna nazwa użytkownika.</string>
 	<string name="nameDuplicated">Podana nazwa użytkownika już istnieje.</string>
 	<string name="accountCreated">Pomyślnie utworzono konto, proszę się zalogować.</string>
-	<string name="loggedIn">Zalogowano jako.</string>
+	<string name="loggedIn">Zalogowano jako</string>
 	<string name="confirmLocation">Potwierdź lokalizację</string>
 
 </resources>

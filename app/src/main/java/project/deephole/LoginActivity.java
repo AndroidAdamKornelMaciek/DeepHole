@@ -124,7 +124,7 @@ public class LoginActivity extends Activity {
 		AccountForm account = db.selectAccountForm(id);
 
 		Toast.makeText(this, getResources().getString(R.string.loggedIn)
-				+ " " + account.getName(), Toast.LENGTH_LONG).show();
+				+ " " + account.getName() + ".", Toast.LENGTH_LONG).show();
 		Intent intent = new Intent(this, DeepHoleActivity.class);
 		startActivityForResult(intent, EXIT_CODE);
 	}
