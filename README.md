@@ -1,5 +1,5 @@
 ﻿# DziuraWdrodze.pl
-## Ratujemy koła od 2015r
+###### Ratujemy koła od 2015r
 
 Aplikacja została stworzona w ramach projektu akademickiego. Miała powstać przy wykorzystaniu całej wiedzy zdobytej podczas wykładu. Służy do powiadamiania wybranego odbiorcy o dziurze w drodze. Projekt *DeepHole* został napisany z myślą o rozwijaniu go w kierunku aplikacji łączącej się z serwerem, który teraz reprezentowany jest przez lokalną bazę danych.
 
