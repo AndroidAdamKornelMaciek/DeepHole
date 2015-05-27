@@ -37,7 +37,7 @@ public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 		TextView locView = (TextView) rowView.findViewById(R.id.location);
 
 		if(hole.getPhotoPath() == null)
-			Log.d("getView", "null photo path");
+			Log.d("DEBUG", "null photo path");
 		new FetchPhotoTask(photoView, hole.getPhotoPath()).execute();
 		String end = "";
 		String formatted = hole.getDesc().replace("\n", " ");

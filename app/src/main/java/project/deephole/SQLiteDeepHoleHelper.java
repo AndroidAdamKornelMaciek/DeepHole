@@ -204,19 +204,7 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
     public AccountForm getAccountByID(int id) {
         ArrayList<AccountForm> ar = getAllAccountForms();
         return ar.get(id);
-/*        String query = "SELECT * FROM " + TABLE_ACCOUNTS + " WHERE " + KEY_ACC_ID + " = " + id;
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-        AccountForm form = null;
-
-        if (cursor.moveToFirst()) {
-            form = accountFormBuilder(cursor);
-        }
-
-        Log.d("getAccountByID()", form.toString());
-        return form;
-*/    }
+    }
 
 	public int updateForm(Form form) {
 		SQLiteDatabase db = this.getWritableDatabase();

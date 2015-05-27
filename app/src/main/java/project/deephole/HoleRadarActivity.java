@@ -28,7 +28,7 @@ public class HoleRadarActivity extends Activity {
 		GoogleMap map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		map.addMarker(new MarkerOptions()
 						.position(coordinates)
-						.title("Here is a deep hole...")
+						.title("Tu jest dziura.")
 		);
 		map.moveCamera(CameraUpdateFactory.newLatLngZoom(coordinates, 17));
 		map.animateCamera(CameraUpdateFactory.zoomTo(12), 2000, null);
