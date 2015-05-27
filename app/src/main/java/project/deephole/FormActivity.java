@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,11 +35,26 @@ import com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListe
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutionException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 
 /**
  * Aktywność przeznaczona do zgłaszania ubytków w nawierzchni bitumicznej. W tej aktywności, można zrobić zdjęcie, dodać mu opis, ustalić pozycję oraz się podpisać i wysłać zgłoszenie mailem.
@@ -108,6 +125,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	 */
 	LatLng location;
     GoogleApiClient mGoogleApiClient;
+    String currentAddress;
 
 
     /**
@@ -357,7 +375,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			startActivityForResult(intent, REQUEST_LOCATION);
 		} else {
 			if (mLastKnownLocation != null) {
-				Log.d("Lokalizacja", mLastKnownLocation.toString());
+                Log.d("Lokalizacja", mLastKnownLocation.toString());
                 location = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
                 sendEmail();
 			} else {
@@ -389,7 +407,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		if(phoneNumber == null || phoneNumber.equals("000000000"))
 			phoneNumber = af.getPhone();
 
-		Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
+        //Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
+        Form form = new Form(0, currentPhotoPath, desc, recipient, currentAddress + "::" + location.toString(), signature, phoneNumber);
 
 		Log.d("Wygenerowany formularz", form.toString());
 
@@ -400,7 +419,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
 		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Formularz zgłoszeniowy");
 		emailIntent.putExtra(Intent.EXTRA_TEXT, "Opis usterki: " + desc + "\n"
-				+ "Lokalizacja: " + location.toString() + "\n"
+	//			+ "Lokalizacja: " + location.toString() + "\n"
+                + "Lokalizacja: " + currentAddress + ": " + location.toString() + "\n"
 				+ "Kontakt z autorem zgłoszenia: " + phoneNumber + "\n"
 				+ "Autor: " + signature + "\n"
 				+ "PESEL: " + af.getPesel());
@@ -460,6 +480,19 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
         if (mLastKnownLocation != null) {
             Log.d("LOK", "lat: " + mLastKnownLocation.getLatitude() + " lng: " + mLastKnownLocation.getLongitude());
+
+            AsyncRouteGetter arg = new AsyncRouteGetter();
+            arg.execute(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+            String route = "";
+            try {
+                route = arg.get();
+            } catch (Exception e) { Log.d("LOK", "BLAD1"); return; }
+            if (route != null) {
+                Log.d("LOK", route);
+                currentAddress = route;
+            } else {
+                Log.d("LOK", "BLAD2");
+            }
         } else {
             Log.d("LOK", "polaczono ale nie ma lokalizacji");
         }

@@ -46,7 +46,7 @@ public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 		if(formatted.equals(""))
 			formatted = nonDesc;
 		dscView.setText(dscView.getText().toString() + " " + formatted + end);
-		locView.setText(locView.getText().toString() + " " + hole.getReadableLocation());
+		locView.setText(locView.getText().toString() + " " + hole.getReadableLocation().split(",")[1]);
 
 		return rowView;
 	}

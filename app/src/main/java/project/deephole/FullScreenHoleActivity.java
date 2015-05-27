@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -33,6 +34,7 @@ public class FullScreenHoleActivity extends Activity {
 		String desc = extras.getString(OverviewActivity.DESC_KEY);
 		String readableLoc = extras.getString(OverviewActivity.READ_LOCAL_KEY);
 		location = extras.getString(OverviewActivity.LOCAL_KEY);
+        Log.d("TAG", location);
 
 		photoView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
 			@Override

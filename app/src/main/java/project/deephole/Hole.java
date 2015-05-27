@@ -7,11 +7,14 @@ public class Hole {
 	private String photoPath;
 	private String desc;
 	private String location;
+    private String readableLocation;
 
 	public Hole(String p, String d, String l) {
 		photoPath = p;
 		desc = d;
-		location = l;
+        String tab[] = l.split("::");
+		location = tab[1];
+        readableLocation = tab[0];
 	}
 
 	public String getPhotoPath() {
@@ -27,7 +30,7 @@ public class Hole {
 	}
 
 	public String getReadableLocation() {
-		return parser(location);
+		return readableLocation;
 	}
 
 	public String parser(String location) {
