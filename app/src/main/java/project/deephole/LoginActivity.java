@@ -4,19 +4,14 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.Location;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
-import java.util.Map;
-
 
 public class LoginActivity extends Activity {
 	SQLiteDeepHoleHelper db;
@@ -67,7 +62,6 @@ public class LoginActivity extends Activity {
 		if (requestCode == EXIT_CODE) {
 			if (resultCode == RESULT_OK) {
                 Log.d("log", "user logged out");
-				// wylogowanie
 			} else {
                 finish();
             }

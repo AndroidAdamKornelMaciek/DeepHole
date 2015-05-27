@@ -1,6 +1,5 @@
 package project.deephole;
 
-//KLASA FORMULARZA, OBIEKTY TEJ KLASY BĘDĄ GENEROWANE PRZY UŻYCIU PRZYCISKU "SUBMIT FORM", NASTĘPNIE PRZETWARZANE PRZEZ BAZĘ DANYCH
 public class Form {
 
 	private int id;

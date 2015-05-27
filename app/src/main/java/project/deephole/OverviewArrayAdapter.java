@@ -1,8 +1,6 @@
 package project.deephole;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,7 +43,7 @@ public class OverviewArrayAdapter extends ArrayAdapter<Hole> {
 			formatted = formatted.substring(0, 20);
 			end = "...";
 		}
-		if(formatted == null)
+		if(formatted.equals(""))
 			formatted = nonDesc;
 		dscView.setText(dscView.getText().toString() + " " + formatted + end);
 		locView.setText(locView.getText().toString() + " " + hole.getReadableLocation());

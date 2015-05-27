@@ -58,19 +58,6 @@
             android:id="@+id/manual_radio_button"
             android:layout_weight="1"/>
     </RadioGroup>
-<!--
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:inputType="numberDecimal"
-        android:ems="15"
-        android:id="@+id/sender_signature"
-        android:layout_above="@+id/confirm_button"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:layout_marginBottom="10dp"
-        android:hint="Please insert PESEL."/>
--->
 
     <LinearLayout
         android:layout_width="fill_parent"

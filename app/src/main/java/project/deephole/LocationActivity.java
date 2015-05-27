@@ -61,7 +61,7 @@ public class LocationActivity extends Activity {
 
 	public void confirmLocation(View view) {
 		if(!picked) {
-			Toast.makeText(getApplicationContext(), "Okre?l lokalizacj? dziury",
+			Toast.makeText(getApplicationContext(), "Określ lokalizację dziury",
 					Toast.LENGTH_LONG).show();
 			return;
 		}

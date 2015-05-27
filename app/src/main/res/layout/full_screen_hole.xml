@@ -59,7 +59,7 @@
 			android:layout_height="wrap_content"
 			android:layout_below="@+id/description"
 			android:layout_alignParentLeft="true"
-			android:layout_marginLeft="10dp"
+			android:layout_marginLeft="15dp"
 			android:layout_marginRight="10dp"
 			android:maxLines="4"
 			android:layout_toLeftOf="@+id/map_btn"

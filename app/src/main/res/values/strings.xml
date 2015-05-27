@@ -20,7 +20,7 @@
     <string name="title_activity_hole_radar">HoleRadarActivity</string>
     <string name="title_activity_login">LoginActivity</string>
 	<string name="action_settings">Ustawienia</string>
-	<string name="reset">Wyczyść formularz</string>
+	<string name="reset">Wyczyść</string>
     <string name="chooseManually">Wybór manualny</string>
     <string name="chooseAuto">Auto-lokalizacja</string>
     <string name="descriptionHint">Opis ubytku</string>

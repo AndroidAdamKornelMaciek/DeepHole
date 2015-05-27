@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
@@ -66,14 +67,11 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
     /**
      * Uzywane do logowania w SharedPreferrences
      */
-    static final String KEY_ACCTUAL_ACCOUNT = "accAcc";
-
     static final String DESC_KEY = "description";
     static final String RECIPIENT_KEY = "recipient";
     static final String LOC_PREF_KEY = "localization";
-    static final String PESEL_KEY = "pesel";
 
-    int id; //zalogowany user
+    int id;
     static final String KEY_LOG_ID = "accLogId";
 
     private SQLiteDeepHoleHelper db;
@@ -90,10 +88,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
      */
     private EditText descriptEditor;
     /**
-     * Pole, w którym użytkownik się podpisuje.
-     */
-    private EditText signEditor;
-    /**
      * Spinner zawierający listę odbiorców maila.
      */
     private Spinner recipientList;
@@ -101,11 +95,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
      * Boolean przechowujący wybór użytkownika. Wybór lokalizacji manualny lub automatyczny.
      */
     private boolean manual;
-    /**
-     * TODO
-     */
-    private GoogleApiClient mGoogleApiClient;
-    /**
+	/**
      * TODO
      */
     private Location mLastKnownLocation;
@@ -135,7 +125,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         photoPreview.setImageResource(R.drawable.camera_icon);
 
         descriptEditor = (EditText) findViewById(R.id.description);
-//		signEditor = (EditText) findViewById(R.id.sender_signature);
 
         recipientList = (Spinner) findViewById(R.id.recipient_list);
 
@@ -154,7 +143,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
         SharedPreferences sp = getSharedPreferences("shpr", Context.MODE_PRIVATE);
         id = sp.getInt(KEY_LOG_ID, -1);
-        AccountForm af = db.getAccountByID(id);
         ((TextView) findViewById(R.id.loggedUser)).setText("");
 
         SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
@@ -165,9 +153,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    // Usuwam observer, żeby nie latał w kółko
                     photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
                     setPic();
                 }
             });
@@ -196,9 +182,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
                     photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            // usunac observer, zeby odpalil tylko raz
                             photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-
                             setPic();
                         }
                     });
@@ -246,7 +230,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         int locPref = locMenu.getCheckedRadioButtonId();
         editor.putInt(LOC_PREF_KEY, locPref);
 
-//		editor.putString(PESEL_KEY, signEditor.getText().toString());
         editor.putBoolean(ADDED_KEY, pictureAdded);
         editor.commit();
     }
@@ -280,8 +263,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
     /**
      * Metoda tworząca plik w interesującej nas lokalizacji
-     *
-     * @return
      * @throws IOException
      */
     private File createImageFile() throws IOException {
@@ -328,7 +309,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         pictureAdded = true;
         bmOptions.inSampleSize = inScaleFactor * 8;
         bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        //BLOK KODU ODPOWIEDZIALNY ZA ZAPISANIE MINIATURY OBOK ZDJĘCIA!!! NIE RUSZAĆ xD UŻYWANE W OVERVIEW ACTIVITY!
         File filename = new File(currentPhotoPath.substring(0, currentPhotoPath.length() - 4) + "mini.jpg");
         FileOutputStream out = null;
         try {
@@ -351,8 +331,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
     /**
      * Metoda sprawdzająca przed wysłaniem maila czy wszystkie dane są poprawne.
-     *
-     * @param view
      */
     public void validateMailData(View view) {
         String recipient = recipientList.getSelectedItem().toString();
@@ -372,7 +350,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             startActivityForResult(intent, REQUEST_LOCATION);
         } else {
             if (mLastKnownLocation != null) {
-                //nie można pobrać lokalizacji nawet przy włączonym GPS
                 Log.d("Lokalizacja", mLastKnownLocation.toString());
             } else {
                 Intent intent = new Intent(this, LocationActivity.class);
@@ -387,15 +364,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
      * Metoda wysyłająca startująca chosera ACTION_SEND oraz pakująca zgłoszenie do bazy danych.
      */
     public void sendEmail() {
-        // w af masz geterami wszystkie dane zalogowanego usera
         AccountForm af = db.getAccountByID(id);
-        /*af.getId();
-        af.getName();
-        af.getPassword();
-        af.getEmail();
-        af.getPhone();
-        af.getPesel();*/
-
 
         String desc = descriptEditor.getText().toString();
         String recipient = recipientList.getSelectedItem().toString();
@@ -423,8 +392,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
                 + "Kontakt z autorem zgłoszenia: " + phoneNumber + "\n"
                 + "Autor: " + signature);
 
-        File root = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES);
         File file = new File(currentPhotoPath);
         if (!file.exists() || !file.canRead()) {
             Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
@@ -464,6 +431,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
     @Override
     public void onConnected(Bundle bundle) {
+		GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
+				.addConnectionCallbacks(this)
+				.addOnConnectionFailedListener(this)
+				.addApi(LocationServices.API).build();
         mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
@@ -478,7 +449,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
+    public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         Log.d("debug", "onSaveInstanceState");
         if (pictureAdded) {

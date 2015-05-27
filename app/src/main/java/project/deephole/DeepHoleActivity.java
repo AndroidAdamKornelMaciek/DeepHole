@@ -9,16 +9,12 @@ import android.view.Menu;
 import android.view.View;
 
 public class DeepHoleActivity extends Activity {
-    private int id;
-    static final String KEY_LOG_ID = "accLogId";
+	static final String KEY_LOG_ID = "accLogId";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.deep_hole_layout);
-
-        SharedPreferences sharedPref = getSharedPreferences("shpr",Context.MODE_PRIVATE);
-        id = sharedPref.getInt(KEY_LOG_ID, -1);
 	}
 
 
