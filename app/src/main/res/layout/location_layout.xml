@@ -12,7 +12,7 @@
 		style="?android:attr/buttonStyleSmall"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:text="Confirm Location"
+		android:text="@string/confirmLocation"
 		android:id="@+id/confirm_btn"
 		android:layout_alignParentBottom="true"
 		android:layout_centerHorizontal="true"

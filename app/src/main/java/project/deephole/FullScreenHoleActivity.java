@@ -42,7 +42,8 @@ public class FullScreenHoleActivity extends Activity {
 			}
 		});
 
-		descView.setText(desc);
+		if(!desc.equals(""))
+			descView.setText(desc);
 		descView.setMovementMethod(new ScrollingMovementMethod());
 		locView.setText(readableLoc);
 		mapBtn.setBackgroundResource(R.drawable.map_icon);

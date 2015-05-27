@@ -118,6 +118,38 @@ public class SQLiteDeepHoleHelper extends SQLiteOpenHelper {
 		return form;
 	}
 
+	public AccountForm selectAccountForm(int id){
+		SQLiteDatabase db = this.getReadableDatabase();
+
+		Cursor cursor =
+				db.query(TABLE_ACCOUNTS,
+						ACCOUNT_COLUMNS,
+						KEY_ID + " = ?",
+						new String[]{String.valueOf(id + 1)},
+						null, // group by
+						null, // having
+						null, // order by
+						null); // limit
+
+		if (cursor != null) {
+			Log.d("selectAccount", "ID = " + id + 1);
+			cursor.moveToFirst();
+		} else {
+			Log.d("selectAccount", "cursor == null, brak konta o zadanym id!");
+			return null;
+		}
+
+		AccountForm account = new AccountForm();
+		account.setName(cursor.getString(0));
+		account.setPassword(cursor.getString(1));
+		account.setEmail(cursor.getString(2));
+		account.setPhone(cursor.getString(3));
+		account.setPesel(cursor.getString(4));
+
+		Log.d("selectAccount(" + id + ")", account.toString());
+		return account;
+	}
+
 	public ArrayList<Form> getAllForms() {
 		ArrayList<Form> forms = new ArrayList<>();
 

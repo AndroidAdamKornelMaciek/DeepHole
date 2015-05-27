@@ -61,6 +61,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_marginLeft="15dp"
 			android:layout_marginRight="10dp"
+			android:text="@string/nonDescription"
 			android:maxLines="4"
 			android:layout_toLeftOf="@+id/map_btn"
 			android:scrollbars="vertical"

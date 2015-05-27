@@ -231,7 +231,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         editor.putInt(LOC_PREF_KEY, locPref);
 
         editor.putBoolean(ADDED_KEY, pictureAdded);
-        editor.commit();
+        editor.apply();
     }
 
    public void takePhoto(View view) {
@@ -377,6 +377,9 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             e.printStackTrace();
         }
 
+		if(phoneNumber.equals("000000000"))
+			phoneNumber = af.getPhone();
+
         Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
 
         Log.d("Wygenerowany formularz", form.toString());
@@ -386,11 +389,12 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Formularz zgłoszeniowy");
         emailIntent.putExtra(Intent.EXTRA_TEXT, "Opis usterki: " + desc + "\n"
                 + "Lokalizacja: " + location.toString() + "\n"
                 + "Kontakt z autorem zgłoszenia: " + phoneNumber + "\n"
-                + "Autor: " + signature);
+                + "Autor: " + signature + "\n"
+				+ "PESEL: " + af.getPesel());
 
         File file = new File(currentPhotoPath);
         if (!file.exists() || !file.canRead()) {

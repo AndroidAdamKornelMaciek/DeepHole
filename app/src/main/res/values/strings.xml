@@ -25,7 +25,7 @@
     <string name="chooseAuto">Auto-lokalizacja</string>
     <string name="descriptionHint">Opis ubytku</string>
 	<string name="descriptionPrompt">Opis ubytku:</string>
-	<string name="nonDescription">Brak opisu.</string>
+	<string name="nonDescription">Brak opisu</string>
 	<string name="descShortPrompt">Opis:</string>
 	<string name="localizationPrompt">Lokalizacja:</string>
 	<string name="deepHoleWarning">Uwaga! Głęboka dziura...</string>
@@ -38,5 +38,14 @@
     <string name="password">Hasło</string>
     <string name="mail">Adres e-mail</string>
     <string name="logout">Wyloguj</string>
+	<string name="wrongPassword">Błędne hasło.</string>
+	<string name="wrongMail">Podano błędny adres mailowy.</string>
+	<string name="wrongPeselLength">Niepoprawna długość numeru PESEL.</string>
+	<string name="wrongPesel">Błędny numer PESEL.</string>
+	<string name="wrongName">Błędna nazwa użytkownika.</string>
+	<string name="nameDuplicated">Podana nazwa użytkownika już istnieje.</string>
+	<string name="accountCreated">Pomyślnie utworzono konto, proszę się zalogować.</string>
+	<string name="loggedIn">Zalogowano jako.</string>
+	<string name="confirmLocation">Potwierdź lokalizację</string>
 
 </resources>

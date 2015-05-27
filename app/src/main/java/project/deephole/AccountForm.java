@@ -70,8 +70,8 @@ public class AccountForm {
 
 	@Override
 	public String toString() {
-		return "AccountForm [ID = " + id + ", Name = " + name + ", Password = " + password +
-				", EMail = " + email + ", Phone = " + phone +
+		return "AccountForm [ID = " + id + ", Nazwa = " + name + ", Hasło = " + password +
+				", EMail = " + email + ", Telefon = " + phone +
 				", Pesel = " + pesel + "]";
 	}
 }

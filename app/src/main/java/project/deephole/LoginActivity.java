@@ -98,13 +98,15 @@ public class LoginActivity extends Activity {
 					login((int)(x.getId()-1));
 					return;
 				} else {
-					Toast.makeText(this, "Wrong Password", Toast.LENGTH_LONG).show();
+					Toast.makeText(this, getResources().getString(R.string.wrongPassword),
+							Toast.LENGTH_LONG).show();
 					((TextView)findViewById(R.id.passwordText)).setText("");
 					return;
 				}
 			}
 		}
-		Toast.makeText(this, "Name not found", Toast.LENGTH_LONG).show();
+		Toast.makeText(this, getResources().getString(R.string.wrongName),
+				Toast.LENGTH_LONG).show();
 	}
 
 	public void onRegister(View view) {
@@ -119,7 +121,10 @@ public class LoginActivity extends Activity {
 		editor.putInt(KEY_LOG_ID, id);
 		editor.apply();
 
-		Toast.makeText(this, "Logged In, ID = " + id, Toast.LENGTH_LONG).show();
+		AccountForm account = db.selectAccountForm(id);
+
+		Toast.makeText(this, getResources().getString(R.string.loggedIn)
+				+ " " + account.getName(), Toast.LENGTH_LONG).show();
 		Intent intent = new Intent(this, DeepHoleActivity.class);
 		startActivityForResult(intent, EXIT_CODE);
 	}

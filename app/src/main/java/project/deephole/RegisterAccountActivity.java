@@ -53,22 +53,26 @@ public class RegisterAccountActivity extends Activity {
 
 		for (AccountForm x : forms) {
 			if (x.getName().equals(name)) {
-				Toast.makeText(getApplicationContext(), "Account name already used.", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.nameDuplicated),
+						Toast.LENGTH_LONG).show();
 				return;
 			}
 		}
 
         if (!email.contains("@")) {
-            Toast.makeText(getApplicationContext(), "Wrong EMail, @ not found!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.wrongMail),
+					Toast.LENGTH_LONG).show();
             return;
         }
         if (!email.contains(".")) {
-            Toast.makeText(getApplicationContext(), "Wrong EMail, . not found!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getResources().getString(R.string.wrongMail),
+					Toast.LENGTH_LONG).show();
             return;
         }
 
 		if (pesel.length() != 11) {
-			Toast.makeText(getApplicationContext(), "Wrong length of PESEL!", Toast.LENGTH_LONG).show();
+			Toast.makeText(getApplicationContext(), getResources().getString(R.string.wrongPeselLength),
+					Toast.LENGTH_LONG).show();
 			return;
 		} else {
 			int res = 0;
@@ -77,7 +81,8 @@ public class RegisterAccountActivity extends Activity {
 				res += tab[i] * (pesel.charAt(i) - '0');
 			}
 			if (res % 10 != 0) {
-				Toast.makeText(getApplicationContext(), "Invalid PESEL!", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), getResources().getString(R.string.wrongPesel),
+						Toast.LENGTH_LONG).show();
 				return;
 			}
 		}
@@ -88,7 +93,8 @@ public class RegisterAccountActivity extends Activity {
 
         db.insertAccountForm(form);
 
-		Toast.makeText(getApplicationContext(), "Account created and saved. Please log in", Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(), getResources().getString(R.string.accountCreated),
+				Toast.LENGTH_LONG).show();
 
         Intent returnIntent = new Intent();
         returnIntent.putExtra(NAME_KEY, name);
