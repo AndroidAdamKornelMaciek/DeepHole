@@ -107,8 +107,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	 * Przechowuje lokalizację.
 	 */
 	LatLng location;
+    GoogleApiClient mGoogleApiClient;
 
-	/**
+
+    /**
 	 * W metodzie onCreate() polom przypisywane są odpowiednie referencje. Zastosowany został też wzorzec treeObserver. W związku z tym, że ImageView długo ma wymiary 0px x 0px
 	 * nie jest możliwe przeskalowanie zdjęcia. Żeby użytkownik nie wysypał aplikacji zbyt dużym zdjęciem, dodajemy do imageView onGlobalLayoutListener. Jego metoda onGlobalLayout()
 	 * wywołuje się, gdy layout robi się globalny. Aby kod w metodzie nie wywoływał się ciągle, pierwsza rzecz jaką robimy to usuwamy listenera, a potem wypełniamy photoPreview.
@@ -118,6 +120,11 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API).build();
+
 		setContentView(R.layout.form_layout);
 		db = new SQLiteDeepHoleHelper(this);
 		pictureAdded = false;
@@ -269,7 +276,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
 		String imageFileName = "JPEG_" + timeStamp + "_";
 		File storageDir = Environment.getExternalStoragePublicDirectory(
-				Environment.DIRECTORY_PICTURES + File.separator + "deepHole");
+                Environment.DIRECTORY_PICTURES + File.separator + "deepHole");
 		if (!storageDir.exists()) {
 			storageDir.mkdir();
 		}
@@ -351,6 +358,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		} else {
 			if (mLastKnownLocation != null) {
 				Log.d("Lokalizacja", mLastKnownLocation.toString());
+                location = new LatLng(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
+                sendEmail();
 			} else {
 				Intent intent = new Intent(this, LocationActivity.class);
 				startActivityForResult(intent, REQUEST_LOCATION);
@@ -433,13 +442,27 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		pictureAdded = false;
 	}
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+    }
+
 	@Override
 	public void onConnected(Bundle bundle) {
-		GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
-				.addConnectionCallbacks(this)
-				.addOnConnectionFailedListener(this)
-				.addApi(LocationServices.API).build();
-		mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+        if (mLastKnownLocation != null) {
+            Log.d("LOK", "lat: " + mLastKnownLocation.getLatitude() + " lng: " + mLastKnownLocation.getLongitude());
+        } else {
+            Log.d("LOK", "polaczono ale nie ma lokalizacji");
+        }
 	}
 
 	@Override
