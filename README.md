@@ -1,6 +1,19 @@
-# DeepHole
-Road hole notification system
+﻿# DziuraWdrodze.pl
+## Ratujemy koła od 2015r
 
-Specyfikacja
+Aplikacja została stworzona w ramach projektu akademickiego. Miała powstać przy wykorzystaniu całej wiedzy zdobytej podczas wykładu. Służy do powiadamiania wybranego odbiorcy o dziurze w drodze. Projekt *DeepHole* został napisany z myślą o rozwijaniu go w kierunku aplikacji łączącej się z serwerem, który teraz reprezentowany jest przez lokalną bazę danych.
 
-  Celem aplikacji jest informowanie odpowiednich organów administracyjnych o poważnych uszkodzeniach w nawierzchni drogowej. Kierowca w przypadku napotkania usterki w nawierzchni staje przed możliwością wysłania zgłoszenia do odpowiedzialnego podmiotu (adresat zostaje wybrany z dostępnej listy). Opcjonalnie użytkownik aplikacji ma sposobność dodania zdjęcia oraz opisu napotkanej przeszkody, w którym przykładowo zawrze informacje o wyrządzonej szkodzie lub poda punkt charakterystyczny ułatwiający załatanie dziury drogowej. W celu uniknięcia nieporozumień odnośnie miejsca zdarzenia użytkownik dołącza swoją geolokalizację wybierając ją z mapy w aplikacji, bądź w sposób automatyczny poprzez namierzenie bieżącego położenia użytkownika. Wykorzystany zostanie także system zarządzania bazą danych SQLite, co zapewni wysoką responsywność produktu i pozwoli na utrzymywanie kluczowych danych w wydajny i bezpieczny sposób. Procedura przesyłania zgłoszenia oparta będzie na protokole SMTP (Simple Mail Transfer Protocol). Autorzy zobowiązują się do obsługi cyklu życia aktywności w przemyślany sposób, użycia fragmentów, aby umożliwić skalowalność aplikacji, poprawnej obsługi obrotu ekranu, stworzenia intuicyjnego, ale rozbudowanego interfejsu użytkownika, odtwarzania stanu aktywności oraz wykorzystania Google Maps Android API v2, a także komunikacji z systemem SQLite i przestrzegania zasad związanych z dobrym stylem programowania.
+1. Zgłoszenie wysyłane mailowo składa się z:
+  -Zdjęcia,
+  -Opisu (opcjonalnie),
+  -Lokalizacji,
+  -Podpisu użytkownika.
+2. Użytkownik może przeglądać dodane przez siebie dziury.
+3. Aplikacja kończy swój udział w wysyłaniu zgłoszenia w momencie przekazania go do klienta poczty.
+
+Zastosowane wzorce projektowe:
+-Model-View-Controler,
+-Tree Observer,
+-Adapter,
+-FactoryMethod,
+-
