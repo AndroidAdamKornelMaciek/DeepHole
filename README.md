@@ -19,8 +19,8 @@ Zastosowane wzorce projektowe:
 - Adapter,
 - FactoryMethod,
 
-'''
-float grade = this.getRated()
-System.out.println(grade)
-5.5
-'''
+```java
+float grade = this.getRated();
+System.out.println(grade);
+5.5;
+```
