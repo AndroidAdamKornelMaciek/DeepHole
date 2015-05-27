@@ -14,7 +14,6 @@ import android.provider.MediaStore;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
@@ -166,7 +165,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
-                    // usunac observer, zeby odpalil tylko raz
+                    // Usuwam observer, żeby nie latał w kółko
                     photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
                     setPic();
@@ -184,9 +183,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
             int pref = sharedPref.getInt(LOC_PREF_KEY, 0);
             RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
             locMenu.check(pref);
-        }
-        if (sharedPref.contains(PESEL_KEY)) {
-//            signEditor.setText(sharedPref.getString(PESEL_KEY, ""));
         }
 
         if (savedInstanceState == null) {
@@ -223,51 +219,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
             Log.d("Powrót z aktywności map", location.toString());
             sendEmail();
-            /*
-			String desc = descriptEditor.getText().toString();
-			String recipient = recipientList.getSelectedItem().toString();
-			String signature = signEditor.getText().toString();
-			TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-			String phoneNumber = tMgr.getLine1Number();
-
-			//uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
-			Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
-
-			Log.d("Wygenerowany formularz", form.toString());
-
-			db.insertForm(form);
-
-			//wysyłanie maila
-			Intent emailIntent = new Intent(Intent.ACTION_SEND);
-			emailIntent.setType("text/plain");
-			emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
-			emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
-			emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
-					+ "Localization: " + location.toString() + "\n"
-					+ "Contact: " + phoneNumber + "\n"
-					+ "Signature: " + signature);
-
-			File root = Environment.getExternalStoragePublicDirectory(
-					Environment.DIRECTORY_PICTURES);
-			//File file = new File(root, currentPhotoPath);
-			File file = new File(currentPhotoPath);
-			if (!file.exists() || !file.canRead()) {
-				Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
-				return;
-			}
-			Uri uri = Uri.fromFile(file);
-			emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
-
-			try {
-				startActivity(Intent.createChooser(emailIntent, "sending mail"));
-				Toast.makeText(getApplicationContext(), "Form was sent successfully.",
-						Toast.LENGTH_LONG).show();
-			} catch (android.content.ActivityNotFoundException ex) {
-				Toast.makeText(getApplicationContext(), "There is no mail client installed.",
-						Toast.LENGTH_LONG).show();
-			}
-			finish();
-			*/
         }
     }
 
@@ -300,17 +251,12 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         editor.commit();
     }
 
-    /**
-     * TODO
-     *
-     * @param view
-     */
-    public void takePhoto(View view) {
+   public void takePhoto(View view) {
         dispatchPhotoIntent();
     }
 
     /**
-     * TODO
+     * Metoda obsługująca robienie zdjęcia
      */
     private void dispatchPhotoIntent() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -333,7 +279,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
     }
 
     /**
-     * TODO
+     * Metoda tworząca plik w interesującej nas lokalizacji
      *
      * @return
      * @throws IOException
@@ -373,9 +319,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
 
         int inScaleFactor = calculateInSampleSize(bmOptions, targetW, targetH);
-		/*int photoW = bmOptions.outWidth;
-		int photoH = bmOptions.outHeight;
-        int scaleFactor = Math.min(photoW / targetW, photoH / targetH);*/
 
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = inScaleFactor;
@@ -390,8 +333,7 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         FileOutputStream out = null;
         try {
             out = new FileOutputStream(filename);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out); // bmp is your Bitmap instance
-            // PNG is a lossless format, the compression factor (100) is ignored
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
         } catch (Exception e) {
             e.printStackTrace();
             Log.d("DEBUG", "miniatura, pierwszy catch");
@@ -405,8 +347,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
                 Log.d("DEBUG", "miniatura, drugi catch");
             }
         }
-
-
     }
 
     /**
@@ -427,7 +367,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
                     Toast.LENGTH_LONG).show();
             return;
         }
-
         if (manual) {
             Intent intent = new Intent(this, LocationActivity.class);
             startActivityForResult(intent, REQUEST_LOCATION);
@@ -441,7 +380,6 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
                 Toast.makeText(getApplicationContext(), "Nie można ustalić ostatniej lokalizacji",
                         Toast.LENGTH_LONG).show();
             }
-
         }
     }
 
@@ -461,12 +399,15 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
         String desc = descriptEditor.getText().toString();
         String recipient = recipientList.getSelectedItem().toString();
-        String signature = ((TextView) findViewById(R.id.loggedUser)).getText().toString();
-        //signEditor.getText().toString();
-        TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-        String phoneNumber = tMgr.getLine1Number();
+        String signature = af.getName();
+        String phoneNumber = "000000000";
+        try {
+            TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+            phoneNumber = tMgr.getLine1Number();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
 
-        //uwaga: id ustawiamy na zero, bo jest kluczem autoinkrementującym się, czyli bez zmartwień
         Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
 
         Log.d("Wygenerowany formularz", form.toString());
@@ -477,14 +418,13 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         emailIntent.setType("text/plain");
         emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Pothole form");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Description: " + desc + "\n"
-                + "Localization: " + location.toString() + "\n"
-                + "Contact: " + phoneNumber + "\n"
-                + "Signature: " + signature);
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Opis usterki: " + desc + "\n"
+                + "Lokalizacja: " + location.toString() + "\n"
+                + "Kontakt z autorem zgłoszenia: " + phoneNumber + "\n"
+                + "Autor: " + signature);
 
         File root = Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES);
-        //File file = new File(root, currentPhotoPath);
         File file = new File(currentPhotoPath);
         if (!file.exists() || !file.canRead()) {
             Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
@@ -539,8 +479,8 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.d("debug", "onSaveInstanceState");
         super.onSaveInstanceState(outState);
+        Log.d("debug", "onSaveInstanceState");
         if (pictureAdded) {
             outState.putBoolean(ADDED_KEY, true);
             outState.putString(PATH_KEY, currentPhotoPath);
@@ -549,26 +489,26 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         }
     }
 
-    public static int calculateInSampleSize(
-            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-        // Raw height and width of image
+    /**
+     * Metoda z API, do obliczania odpowiedniego, docelowego rozmiaru zdjęcia
+     * @param options Opcje bitmapy
+     * @param reqWidth docelowyW
+     * @param reqHeight docelowyH
+     * @return inSampleSize
+     */
+    public static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight ) {
         final int height = options.outHeight;
         final int width = options.outWidth;
         int inSampleSize = 1;
 
         if (height > reqHeight || width > reqWidth) {
-
             final int halfHeight = height / 2;
             final int halfWidth = width / 2;
-
-            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-            // height and width larger than the requested height and width.
             while ((halfHeight / inSampleSize) > reqHeight
                     && (halfWidth / inSampleSize) > reqWidth) {
                 inSampleSize *= 2;
             }
         }
-
         return inSampleSize;
     }
 }
