@@ -47,219 +47,219 @@ import java.util.Date;
  * @version 1.0
  */
 public class FormActivity extends Activity implements ConnectionCallbacks, OnConnectionFailedListener {
-    /**
-     * Stała przechowująca wartość request code dla akcji zdjęcie.
-     */
-    static final int REQUEST_TAKE_PHOTO = 1;
-    /**
-     * Stała przechowująca wartość request code dla akcji lokalizacja.
-     */
-    static final int REQUEST_LOCATION = 2;
-    /**
-     * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
-     */
-    static final String ADDED_KEY = "added";
-    /**
-     * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
-     */
-    static final String PATH_KEY = "path";
-
-    /**
-     * Uzywane do logowania w SharedPreferrences
-     */
-    static final String DESC_KEY = "description";
-    static final String RECIPIENT_KEY = "recipient";
-    static final String LOC_PREF_KEY = "localization";
-
-    int id;
-    static final String KEY_LOG_ID = "accLogId";
-
-    private SQLiteDeepHoleHelper db;
-    /**
-     * Pole przechowujące ścieżkę zdjęcia, które zostało zrobione.
-     */
-    private String currentPhotoPath;
-    /**
-     * W photoPreview wyświetlamy miniaturę zdjęcia, które zostało wykonane.
-     */
-    private ImageView photoPreview;
-    /**
-     * Pole, w które użytkownik wpisuje opis dziury.
-     */
-    private EditText descriptEditor;
-    /**
-     * Spinner zawierający listę odbiorców maila.
-     */
-    private Spinner recipientList;
-    /**
-     * Boolean przechowujący wybór użytkownika. Wybór lokalizacji manualny lub automatyczny.
-     */
-    private boolean manual;
 	/**
-     * TODO
-     */
-    private Location mLastKnownLocation;
-    /**
-     * Boolean przechowujący flagę, czy zostało już wykonane zdjęcie do raportu.
-     */
-    private boolean pictureAdded;
-    /**
-     * Przechowuje lokalizację.
-     */
-    LatLng location;
+	 * Stała przechowująca wartość request code dla akcji zdjęcie.
+	 */
+	static final int REQUEST_TAKE_PHOTO = 1;
+	/**
+	 * Stała przechowująca wartość request code dla akcji lokalizacja.
+	 */
+	static final int REQUEST_LOCATION = 2;
+	/**
+	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
+	 */
+	static final String ADDED_KEY = "added";
+	/**
+	 * Stała przechowująca wartość (String) klucza do Bundle. Wykorzystywana w onSaveInstanceState() oraz w onCreate().
+	 */
+	static final String PATH_KEY = "path";
 
-    /**
-     * W metodzie onCreate() polom przypisywane są odpowiednie referencje. Zastosowany został też wzorzec treeObserver. W związku z tym, że ImageView długo ma wymiary 0px x 0px
-     * nie jest możliwe przeskalowanie zdjęcia. Żeby użytkownik nie wysypał aplikacji zbyt dużym zdjęciem, dodajemy do imageView onGlobalLayoutListener. Jego metoda onGlobalLayout()
-     * wywołuje się, gdy layout robi się globalny. Aby kod w metodzie nie wywoływał się ciągle, pierwsza rzecz jaką robimy to usuwamy listenera, a potem wypełniamy photoPreview.
-     *
-     * @param savedInstanceState Bundle, który przy pierwszym tworzeniu aktywności jest nullem, a później przechowuje stan aplikacji sprzed zabicia.
-     */
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.form_layout);
-        db = new SQLiteDeepHoleHelper(this);
-        pictureAdded = false;
-        photoPreview = (ImageView) findViewById(R.id.hole_photo);
-        photoPreview.setImageResource(R.drawable.camera_icon);
+	/**
+	 * Uzywane do logowania w SharedPreferrences
+	 */
+	static final String DESC_KEY = "description";
+	static final String RECIPIENT_KEY = "recipient";
+	static final String LOC_PREF_KEY = "localization";
 
-        descriptEditor = (EditText) findViewById(R.id.description);
+	int id;
+	static final String KEY_LOG_ID = "accLogId";
 
-        recipientList = (Spinner) findViewById(R.id.recipient_list);
+	private SQLiteDeepHoleHelper db;
+	/**
+	 * Pole przechowujące ścieżkę zdjęcia, które zostało zrobione.
+	 */
+	private String currentPhotoPath;
+	/**
+	 * W photoPreview wyświetlamy miniaturę zdjęcia, które zostało wykonane.
+	 */
+	private ImageView photoPreview;
+	/**
+	 * Pole, w które użytkownik wpisuje opis dziury.
+	 */
+	private EditText descriptEditor;
+	/**
+	 * Spinner zawierający listę odbiorców maila.
+	 */
+	private Spinner recipientList;
+	/**
+	 * Boolean przechowujący wybór użytkownika. Wybór lokalizacji manualny lub automatyczny.
+	 */
+	private boolean manual;
+	/**
+	 * TODO
+	 */
+	private Location mLastKnownLocation;
+	/**
+	 * Boolean przechowujący flagę, czy zostało już wykonane zdjęcie do raportu.
+	 */
+	private boolean pictureAdded;
+	/**
+	 * Przechowuje lokalizację.
+	 */
+	LatLng location;
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.recipient_list, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        recipientList.setAdapter(adapter);
+	/**
+	 * W metodzie onCreate() polom przypisywane są odpowiednie referencje. Zastosowany został też wzorzec treeObserver. W związku z tym, że ImageView długo ma wymiary 0px x 0px
+	 * nie jest możliwe przeskalowanie zdjęcia. Żeby użytkownik nie wysypał aplikacji zbyt dużym zdjęciem, dodajemy do imageView onGlobalLayoutListener. Jego metoda onGlobalLayout()
+	 * wywołuje się, gdy layout robi się globalny. Aby kod w metodzie nie wywoływał się ciągle, pierwsza rzecz jaką robimy to usuwamy listenera, a potem wypełniamy photoPreview.
+	 *
+	 * @param savedInstanceState Bundle, który przy pierwszym tworzeniu aktywności jest nullem, a później przechowuje stan aplikacji sprzed zabicia.
+	 */
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.form_layout);
+		db = new SQLiteDeepHoleHelper(this);
+		pictureAdded = false;
+		photoPreview = (ImageView) findViewById(R.id.hole_photo);
+		photoPreview.setImageResource(R.drawable.camera_icon);
 
-        RadioGroup localizationMenu = (RadioGroup) findViewById(R.id.localization_menu);
-        localizationMenu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                manual = (checkedId == R.id.manual_radio_button);
-            }
-        });
+		descriptEditor = (EditText) findViewById(R.id.description);
 
-        SharedPreferences sp = getSharedPreferences("shpr", Context.MODE_PRIVATE);
-        id = sp.getInt(KEY_LOG_ID, -1);
-        ((TextView) findViewById(R.id.loggedUser)).setText("");
+		recipientList = (Spinner) findViewById(R.id.recipient_list);
 
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        if (sharedPref.contains(ADDED_KEY))
-            pictureAdded = sharedPref.getBoolean(ADDED_KEY, false);
-        if (sharedPref.contains(PATH_KEY) && pictureAdded) {
-            currentPhotoPath = sharedPref.getString(PATH_KEY, null);
-            photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                @Override
-                public void onGlobalLayout() {
-                    photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                    setPic();
-                }
-            });
-        }
-        if (sharedPref.contains(DESC_KEY))
-            descriptEditor.setText(sharedPref.getString(DESC_KEY, ""));
-        if (sharedPref.contains(RECIPIENT_KEY)) {
-            int recipient = sharedPref.getInt(RECIPIENT_KEY, 0);
-            Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
-            recipients.setSelection(recipient);
-        }
-        if (sharedPref.contains(LOC_PREF_KEY)) {
-            int pref = sharedPref.getInt(LOC_PREF_KEY, 0);
-            RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
-            locMenu.check(pref);
-        }
+		ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+				R.array.recipient_list, android.R.layout.simple_spinner_item);
+		adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+		recipientList.setAdapter(adapter);
 
-        if (savedInstanceState == null) {
-            return;
-        }
-        if (savedInstanceState.containsKey(ADDED_KEY)) {
-            if (savedInstanceState.getBoolean(ADDED_KEY)) {
-                try {
-                    currentPhotoPath = savedInstanceState.getString(PATH_KEY);
+		RadioGroup localizationMenu = (RadioGroup) findViewById(R.id.localization_menu);
+		localizationMenu.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				manual = (checkedId == R.id.manual_radio_button);
+			}
+		});
 
-                    photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-                        @Override
-                        public void onGlobalLayout() {
-                            photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                            setPic();
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+		SharedPreferences sp = getSharedPreferences("shpr", Context.MODE_PRIVATE);
+		id = sp.getInt(KEY_LOG_ID, -1);
+		((TextView) findViewById(R.id.loggedUser)).setText("");
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            setPic();
-        } else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
-            Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
-            location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		if (sharedPref.contains(ADDED_KEY))
+			pictureAdded = sharedPref.getBoolean(ADDED_KEY, false);
+		if (sharedPref.contains(PATH_KEY) && pictureAdded) {
+			currentPhotoPath = sharedPref.getString(PATH_KEY, null);
+			photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+				@Override
+				public void onGlobalLayout() {
+					photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+					setPic();
+				}
+			});
+		}
+		if (sharedPref.contains(DESC_KEY))
+			descriptEditor.setText(sharedPref.getString(DESC_KEY, ""));
+		if (sharedPref.contains(RECIPIENT_KEY)) {
+			int recipient = sharedPref.getInt(RECIPIENT_KEY, 0);
+			Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
+			recipients.setSelection(recipient);
+		}
+		if (sharedPref.contains(LOC_PREF_KEY)) {
+			int pref = sharedPref.getInt(LOC_PREF_KEY, 0);
+			RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
+			locMenu.check(pref);
+		}
 
-            Log.d("Powrót z aktywności map", location.toString());
-            sendEmail();
-        }
-    }
+		if (savedInstanceState == null) {
+			return;
+		}
+		if (savedInstanceState.containsKey(ADDED_KEY)) {
+			if (savedInstanceState.getBoolean(ADDED_KEY)) {
+				try {
+					currentPhotoPath = savedInstanceState.getString(PATH_KEY);
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
-    }
+					photoPreview.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+						@Override
+						public void onGlobalLayout() {
+							photoPreview.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+							setPic();
+						}
+					});
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+			setPic();
+		} else if (requestCode == REQUEST_LOCATION && resultCode == RESULT_OK) {
+			Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
+			location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
 
-        if (currentPhotoPath != null)
-            editor.putString(PATH_KEY, currentPhotoPath);
+			Log.d("Powrót z aktywności map", location.toString());
+			sendEmail();
+		}
+	}
 
-        editor.putString(DESC_KEY, descriptEditor.getText().toString());
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		return false;
+	}
 
-        Spinner spinner = (Spinner) findViewById(R.id.recipient_list);
-        int recipient = spinner.getSelectedItemPosition();
-        editor.putInt(RECIPIENT_KEY, recipient);
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		SharedPreferences sharedPref = getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
 
-        RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
-        int locPref = locMenu.getCheckedRadioButtonId();
-        editor.putInt(LOC_PREF_KEY, locPref);
+		if (currentPhotoPath != null)
+			editor.putString(PATH_KEY, currentPhotoPath);
 
-        editor.putBoolean(ADDED_KEY, pictureAdded);
-        editor.apply();
-    }
+		editor.putString(DESC_KEY, descriptEditor.getText().toString());
 
-   public void takePhoto(View view) {
-        dispatchPhotoIntent();
-    }
+		Spinner spinner = (Spinner) findViewById(R.id.recipient_list);
+		int recipient = spinner.getSelectedItemPosition();
+		editor.putInt(RECIPIENT_KEY, recipient);
+
+		RadioGroup locMenu = (RadioGroup) findViewById(R.id.localization_menu);
+		int locPref = locMenu.getCheckedRadioButtonId();
+		editor.putInt(LOC_PREF_KEY, locPref);
+
+		editor.putBoolean(ADDED_KEY, pictureAdded);
+		editor.apply();
+	}
+
+    public void takePhoto(View view) {
+		dispatchPhotoIntent();
+	}
 
     /**
      * Metoda obsługująca robienie zdjęcia
      */
     private void dispatchPhotoIntent() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (intent.resolveActivity(getPackageManager()) != null) {
+	   Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		if (intent.resolveActivity(getPackageManager()) != null) {
 
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
+			File photoFile = null;
+			try {
+				photoFile = createImageFile();
             } catch (IOException ex) {
-                Log.d("dispatchPhotoIntent", "Problem z utworzeniem pliku!");
-            }
+				Log.d("dispatchPhotoIntent", "Problem z utworzeniem pliku!");
+			}
 
-            if (photoFile != null) {
-                Uri currentPhotoUri = Uri.fromFile(photoFile);
-                intent.putExtra(MediaStore.EXTRA_OUTPUT,
-                        currentPhotoUri);
-                startActivityForResult(intent, REQUEST_TAKE_PHOTO);
-            }
-        }
-    }
+			if (photoFile != null) {
+				Uri currentPhotoUri = Uri.fromFile(photoFile);
+				intent.putExtra(MediaStore.EXTRA_OUTPUT,
+						currentPhotoUri);
+				startActivityForResult(intent, REQUEST_TAKE_PHOTO);
+			}
+		}
+	}
 
     /**
      * Metoda tworząca plik w interesującej nas lokalizacji
@@ -267,29 +267,29 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
      */
     private File createImageFile() throws IOException {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "JPEG_" + timeStamp + "_";
-        File storageDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES + File.separator + "deepHole");
-        if (!storageDir.exists()) {
-            storageDir.mkdir();
-        }
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir);
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES + File.separator + "deepHole");
+		if (!storageDir.exists()) {
+			storageDir.mkdir();
+		}
+		File image = File.createTempFile(
+				imageFileName,
+				".jpg",
+				storageDir);
 
-        currentPhotoPath = image.getAbsolutePath();
-        return image;
-    }
+		currentPhotoPath = image.getAbsolutePath();
+		return image;
+	}
 
-    /**
-     * Metoda, która przeskalowuje zdjęcie w celu zapobiegnięcia zapełnieniu pamięci gigantyczną grafiką.
-     * Ustawia w photoPreview zdjęcie, które jest zapisane w currentPhotoPath
-     */
+   /**
+	* Metoda, która przeskalowuje zdjęcie w celu zapobiegnięcia zapełnieniu pamięci gigantyczną grafiką.
+	* Ustawia w photoPreview zdjęcie, które jest zapisane w currentPhotoPath
+	*/
     private void setPic() {
         if (currentPhotoPath == null) {
-            photoPreview.setImageResource(R.drawable.camera_icon);
-            return;
+			photoPreview.setImageResource(R.drawable.camera_icon);
+			return;
         }
 
         int targetW = photoPreview.getWidth();
@@ -304,186 +304,186 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
         bmOptions.inJustDecodeBounds = false;
         bmOptions.inSampleSize = inScaleFactor;
 
-        Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        photoPreview.setImageBitmap(bitmap);
-        pictureAdded = true;
-        bmOptions.inSampleSize = inScaleFactor * 8;
-        bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
-        File filename = new File(currentPhotoPath.substring(0, currentPhotoPath.length() - 4) + "mini.jpg");
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(filename);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.d("DEBUG", "miniatura, pierwszy catch");
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("DEBUG", "miniatura, drugi catch");
-            }
-        }
-    }
+		Bitmap bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+		photoPreview.setImageBitmap(bitmap);
+		pictureAdded = true;
+		bmOptions.inSampleSize = inScaleFactor * 8;
+		bitmap = BitmapFactory.decodeFile(currentPhotoPath, bmOptions);
+		File filename = new File(currentPhotoPath.substring(0, currentPhotoPath.length() - 4) + "mini.jpg");
+		FileOutputStream out = null;
+		try {
+			out = new FileOutputStream(filename);
+			bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.d("DEBUG", "miniatura, pierwszy catch");
+		} finally {
+			try {
+				if (out != null) {
+					out.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+				Log.d("DEBUG", "miniatura, drugi catch");
+			}
+		}
+	}
 
-    /**
-     * Metoda sprawdzająca przed wysłaniem maila czy wszystkie dane są poprawne.
-     */
-    public void validateMailData(View view) {
-        String recipient = recipientList.getSelectedItem().toString();
+	/**
+	 * Metoda sprawdzająca przed wysłaniem maila czy wszystkie dane są poprawne.
+	 */
+	public void validateMailData(View view) {
+		String recipient = recipientList.getSelectedItem().toString();
 
-        if (currentPhotoPath == null) {
-            Toast.makeText(getApplicationContext(), "Zrób zdjęcie",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-        if (recipient.equals("Odbiorca")) {
-            Toast.makeText(getApplicationContext(), "Wybierz odbiorcę",
-                    Toast.LENGTH_LONG).show();
-            return;
-        }
-        if (manual) {
-            Intent intent = new Intent(this, LocationActivity.class);
-            startActivityForResult(intent, REQUEST_LOCATION);
-        } else {
-            if (mLastKnownLocation != null) {
-                Log.d("Lokalizacja", mLastKnownLocation.toString());
-            } else {
-                Intent intent = new Intent(this, LocationActivity.class);
-                startActivityForResult(intent, REQUEST_LOCATION);
-                Toast.makeText(getApplicationContext(), "Nie można ustalić ostatniej lokalizacji",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    }
+		if (currentPhotoPath == null) {
+			Toast.makeText(getApplicationContext(), "Zrób zdjęcie",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (recipient.equals("Odbiorca")) {
+			Toast.makeText(getApplicationContext(), "Wybierz odbiorcę",
+					Toast.LENGTH_LONG).show();
+			return;
+		}
+		if (manual) {
+			Intent intent = new Intent(this, LocationActivity.class);
+			startActivityForResult(intent, REQUEST_LOCATION);
+		} else {
+			if (mLastKnownLocation != null) {
+				Log.d("Lokalizacja", mLastKnownLocation.toString());
+			} else {
+				Intent intent = new Intent(this, LocationActivity.class);
+				startActivityForResult(intent, REQUEST_LOCATION);
+				Toast.makeText(getApplicationContext(), "Nie można ustalić ostatniej lokalizacji",
+						Toast.LENGTH_LONG).show();
+			}
+		}
+	}
 
-    /**
-     * Metoda wysyłająca startująca chosera ACTION_SEND oraz pakująca zgłoszenie do bazy danych.
-     */
-    public void sendEmail() {
-        AccountForm af = db.getAccountByID(id);
+	/**
+	 * Metoda wysyłająca startująca chosera ACTION_SEND oraz pakująca zgłoszenie do bazy danych.
+	 */
+	public void sendEmail() {
+		AccountForm af = db.getAccountByID(id);
 
-        String desc = descriptEditor.getText().toString();
-        String recipient = recipientList.getSelectedItem().toString();
-        String signature = af.getName();
-        String phoneNumber = "000000000";
-        try {
-            TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
-            phoneNumber = tMgr.getLine1Number();
-        }catch(Exception e){
-            e.printStackTrace();
-        }
+		String desc = descriptEditor.getText().toString();
+		String recipient = recipientList.getSelectedItem().toString();
+		String signature = af.getName();
+		String phoneNumber = "000000000";
+		try {
+			TelephonyManager tMgr = (TelephonyManager) getApplicationContext().getSystemService(Context.TELEPHONY_SERVICE);
+			phoneNumber = tMgr.getLine1Number();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 
-		if(phoneNumber.equals("000000000"))
+		if(phoneNumber == null || phoneNumber.equals("000000000"))
 			phoneNumber = af.getPhone();
 
-        Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
+		Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
 
-        Log.d("Wygenerowany formularz", form.toString());
+		Log.d("Wygenerowany formularz", form.toString());
 
-        db.insertForm(form);
+		db.insertForm(form);
 
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
-        emailIntent.setType("text/plain");
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Formularz zgłoszeniowy");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "Opis usterki: " + desc + "\n"
-                + "Lokalizacja: " + location.toString() + "\n"
-                + "Kontakt z autorem zgłoszenia: " + phoneNumber + "\n"
-                + "Autor: " + signature + "\n"
+		Intent emailIntent = new Intent(Intent.ACTION_SEND);
+		emailIntent.setType("text/plain");
+		emailIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{recipient});
+		emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Formularz zgłoszeniowy");
+		emailIntent.putExtra(Intent.EXTRA_TEXT, "Opis usterki: " + desc + "\n"
+				+ "Lokalizacja: " + location.toString() + "\n"
+				+ "Kontakt z autorem zgłoszenia: " + phoneNumber + "\n"
+				+ "Autor: " + signature + "\n"
 				+ "PESEL: " + af.getPesel());
 
-        File file = new File(currentPhotoPath);
-        if (!file.exists() || !file.canRead()) {
-            Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
-            return;
-        }
-        Uri uri = Uri.fromFile(file);
-        emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
+		File file = new File(currentPhotoPath);
+		if (!file.exists() || !file.canRead()) {
+			Log.d("Wczytywanie zdjęcia", "brak istniejącego pliku");
+			return;
+		}
+		Uri uri = Uri.fromFile(file);
+		emailIntent.putExtra(Intent.EXTRA_STREAM, uri);
 
-        try {
-            startActivity(Intent.createChooser(emailIntent, "sending mail"));
-            Toast.makeText(getApplicationContext(), "Zgłoszenie zostało przesłane do klienta poczty.",
-                    Toast.LENGTH_LONG).show();
-        } catch (android.content.ActivityNotFoundException ex) {
-            Toast.makeText(getApplicationContext(), "Brak klienta poczty w urządzeniu.",
-                    Toast.LENGTH_LONG).show();
-        }
-        resetForm();
-        finish();
-    }
+		try {
+			startActivity(Intent.createChooser(emailIntent, "sending mail"));
+			Toast.makeText(getApplicationContext(), "Zgłoszenie zostało przesłane do klienta poczty.",
+					Toast.LENGTH_LONG).show();
+		} catch (android.content.ActivityNotFoundException ex) {
+			Toast.makeText(getApplicationContext(), "Brak klienta poczty w urządzeniu.",
+					Toast.LENGTH_LONG).show();
+		}
+		resetForm();
+		finish();
+	}
 
-    public void resetForm(View view) {
-        resetForm();
-    }
+	public void resetForm(View view) {
+		resetForm();
+	}
 
-    public void resetForm() {
-        Log.d("debug", "resetForm");
-        currentPhotoPath = null;
-        descriptEditor.setText("");
+	public void resetForm() {
+		Log.d("debug", "resetForm");
+		currentPhotoPath = null;
+		descriptEditor.setText("");
 
-        photoPreview.setImageResource(R.drawable.camera_icon);
-        Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
-        recipients.setSelection(0);
-        RadioButton btn = (RadioButton) findViewById(R.id.auto_radio_button);
-        btn.setChecked(true);
-        pictureAdded = false;
-    }
+		photoPreview.setImageResource(R.drawable.camera_icon);
+		Spinner recipients = (Spinner) findViewById(R.id.recipient_list);
+		recipients.setSelection(0);
+		RadioButton btn = (RadioButton) findViewById(R.id.auto_radio_button);
+		btn.setChecked(true);
+		pictureAdded = false;
+	}
 
-    @Override
-    public void onConnected(Bundle bundle) {
+	@Override
+	public void onConnected(Bundle bundle) {
 		GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(this)
 				.addConnectionCallbacks(this)
 				.addOnConnectionFailedListener(this)
 				.addApi(LocationServices.API).build();
-        mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-    }
+		mLastKnownLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+	}
 
-    @Override
-    public void onConnectionSuspended(int i) {
+	@Override
+	public void onConnectionSuspended(int i) {
 
-    }
+	}
 
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
+	@Override
+	public void onConnectionFailed(ConnectionResult connectionResult) {
 
-    }
+	}
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        Log.d("debug", "onSaveInstanceState");
-        if (pictureAdded) {
-            outState.putBoolean(ADDED_KEY, true);
-            outState.putString(PATH_KEY, currentPhotoPath);
-        } else {
-            outState.putBoolean(ADDED_KEY, false);
-        }
-    }
+	@Override
+	public void onSaveInstanceState(@NonNull Bundle outState) {
+		super.onSaveInstanceState(outState);
+		Log.d("debug", "onSaveInstanceState");
+		if (pictureAdded) {
+			outState.putBoolean(ADDED_KEY, true);
+			outState.putString(PATH_KEY, currentPhotoPath);
+		} else {
+			outState.putBoolean(ADDED_KEY, false);
+		}
+	}
 
-    /**
-     * Metoda z API, do obliczania odpowiedniego, docelowego rozmiaru zdjęcia
-     * @param options Opcje bitmapy
-     * @param reqWidth docelowyW
-     * @param reqHeight docelowyH
-     * @return inSampleSize
-     */
-    public static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight ) {
-        final int height = options.outHeight;
-        final int width = options.outWidth;
-        int inSampleSize = 1;
+	/**
+	 * Metoda z API, do obliczania odpowiedniego, docelowego rozmiaru zdjęcia
+	 * @param options Opcje bitmapy
+	 * @param reqWidth docelowyW
+	 * @param reqHeight docelowyH
+	 * @return inSampleSize
+	 */
+	public static int calculateInSampleSize( BitmapFactory.Options options, int reqWidth, int reqHeight ) {
+		final int height = options.outHeight;
+		final int width = options.outWidth;
+		int inSampleSize = 1;
 
-        if (height > reqHeight || width > reqWidth) {
-            final int halfHeight = height / 2;
-            final int halfWidth = width / 2;
-            while ((halfHeight / inSampleSize) > reqHeight
-                    && (halfWidth / inSampleSize) > reqWidth) {
-                inSampleSize *= 2;
-            }
-        }
-        return inSampleSize;
-    }
+		if (height > reqHeight || width > reqWidth) {
+			final int halfHeight = height / 2;
+			final int halfWidth = width / 2;
+			while ((halfHeight / inSampleSize) > reqHeight
+					&& (halfWidth / inSampleSize) > reqWidth) {
+				inSampleSize *= 2;
+			}
+		}
+		return inSampleSize;
+	}
 }
