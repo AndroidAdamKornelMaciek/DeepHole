@@ -226,6 +226,20 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 			Bundle coordinates = data.getParcelableExtra(LocationActivity.COORDINATES_KEY);
 			location = coordinates.getParcelable(LocationActivity.LOCATION_KEY);
 
+            AsyncRouteGetter arg = new AsyncRouteGetter();
+            arg.execute(location.latitude, location.longitude);
+            String route = null;
+            try {
+                route = arg.get();
+            } catch (Exception e) { Log.d("LOK", "BLAD1"); }
+            if (route != null) {
+                Log.d("LOK", route);
+                currentAddress = route;
+            } else {
+                Log.d("LOK", "BLAD2");
+                currentAddress = "Wrocław, Wrocław";
+            }
+
 			Log.d("Powrót z aktywności map", location.toString());
 			sendEmail();
 		}
@@ -407,6 +421,10 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 		if(phoneNumber == null || phoneNumber.equals("000000000"))
 			phoneNumber = af.getPhone();
 
+        if (currentAddress == null || !currentAddress.contains(",")) {
+            currentAddress = "Wrocław, Wrocław";
+        }
+
         //Form form = new Form(0, currentPhotoPath, desc, recipient, location.toString(), signature, phoneNumber);
         Form form = new Form(0, currentPhotoPath, desc, recipient, currentAddress + "::" + location.toString(), signature, phoneNumber);
 
@@ -483,15 +501,16 @@ public class FormActivity extends Activity implements ConnectionCallbacks, OnCon
 
             AsyncRouteGetter arg = new AsyncRouteGetter();
             arg.execute(mLastKnownLocation.getLatitude(), mLastKnownLocation.getLongitude());
-            String route = "";
+            String route = null;
             try {
                 route = arg.get();
-            } catch (Exception e) { Log.d("LOK", "BLAD1"); return; }
+            } catch (Exception e) { Log.d("LOK", "BLAD1"); }
             if (route != null) {
                 Log.d("LOK", route);
                 currentAddress = route;
             } else {
                 Log.d("LOK", "BLAD2");
+                currentAddress = "Wrocław, Wrocław";
             }
         } else {
             Log.d("LOK", "polaczono ale nie ma lokalizacji");
